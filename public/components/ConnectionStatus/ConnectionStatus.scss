@@ -1,0 +1,18 @@
+connection-status {
+  width: 100%;
+  min-height: 10px;
+  background-color: gray;
+  display: block;
+}
+
+connection-status.connecting {
+  background-color: yellow;
+}
+
+connection-status.disconnected {
+  background-color: red;
+}
+
+connection-status.connected {
+  background-color: green;
+}

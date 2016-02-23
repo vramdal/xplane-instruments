@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "7segment";
+  src: url("./DSEG14ClassicMini-BoldItalic.woff") format('woff');
+}
+
+seven-segment {
+  font-family: "7segment", sans-serif;
+  display: inline-block;
+}
+
+seven-segment:not(.dot) {
+  min-width: 1em;
+}
+
+seven-segment.dot {
+  min-width: 3pt;
+}
+
+seven-segment-number {
+  color: #AD0000;
+  white-space: pre;
+}
