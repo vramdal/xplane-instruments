@@ -1,0 +1,19 @@
+.panel {
+
+  $backgroundColor: #343d46;
+  border-radius: 1em;
+  border: 3px solid white;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  padding-left: 1em;
+  padding-right: 1em;
+  background-color: $backgroundColor;
+  display: flex;
+
+  .panel-title {
+    color: white;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+}
+

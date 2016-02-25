@@ -6,7 +6,9 @@ class DME extends React.Component {
 
     render() {
         return (
-            <SevenSegmentNumber max={999} numDecimals={2} nanText="NaN" zeroPadding={false}>{this.props.value}</SevenSegmentNumber>
+                <instrument className="DME">
+                    <SevenSegmentNumber className="DME" max={999} numDecimals={2} nanText="NaN" zeroPadding={false}>{this.props.value}</SevenSegmentNumber>
+                </instrument>
         );
     }
 

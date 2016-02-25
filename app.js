@@ -8,6 +8,7 @@ var serverIp = process.env["serverIp"] || "localhost";
 //var outputWs = require("./server");
 var sendMsg = function (dataref) {
     // Sim/cockpit/radios/nav1 freq hz
+    // sim/cockpit/radios/adf1_dme_dist_m
     var outgoing = new Buffer(new Array(413));
     outgoing.write("RREF\0");
     outgoing.writeInt32LE(1, 5);

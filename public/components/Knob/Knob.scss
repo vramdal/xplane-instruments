@@ -1,0 +1,18 @@
+knob {
+  background-image: url('./Knob.png');
+  background-size: cover;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  knob {
+    width: 60%;
+    height: 60%;
+    border: 1px solid gray;
+    border-radius: 60%;
+    box-shadow: inset 2px 2px gray
+  }
+
+}
