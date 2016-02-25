@@ -7,12 +7,29 @@ knob {
   justify-content: center;
   align-items: center;
 
-  knob {
-    width: 60%;
-    height: 60%;
+}
+
+dual-knob {
+  display: flex;
+  flex-direction: row;
+  height: 180px;
+  width: 180px;
+
+  knob.major {
+    position: absolute;
+  }
+
+  knob.minor {
+    width: 90px;
+    height: 90px;
     border: 1px solid gray;
     border-radius: 60%;
-    box-shadow: inset 2px 2px gray
+    box-shadow: inset 2px 2px gray;
+    position: relative;
+    left: 45px;
+    top: 45px;
   }
 
 }
+
+

@@ -9,18 +9,22 @@ class NavRadio extends React.Component {
 
     onMajorKnobChange(changedAmount) {
         let newValue = this.props.frequency + changedAmount;
+        newValue = Math.min(newValue, this.props.max);
+        newValue = Math.max(newValue, this.props.min);
         this.onNewValue(newValue);
     }
 
     onMinorKnobChange(changedAmount) {
-        let fractions = this.props.frequency - Math.floor(this.props.frequency);
-        let newValue = this.props.frequency + fractions + changedAmount / 100
+        let fraction = this.props.frequency - Math.floor(this.props.frequency);
+        let newFraction = fraction + changedAmount / 10 / 100;
+        console.log("frequency", this.props.frequency, "fraction =", fraction, "newFraction", newFraction);
+        newFraction = Math.min(newFraction, 1);
+        newFraction = Math.max(newFraction, 0);
+        let newValue = this.props.frequency + newFraction;
         this.onNewValue(newValue);
     }
 
     onNewValue(newValue) {
-        newValue = Math.min(newValue, this.props.max);
-        newValue = Math.max(newValue, this.props.min);
         this.props.dispatch(
                 dataRefValueChangedOnClient(this.props.dataRefId, newValue)
         );
@@ -30,10 +34,10 @@ class NavRadio extends React.Component {
         return (
                 <nav-radio>
                     <SevenSegmentNumber max={this.props.max} numDecimals={2} nanText="NaN">{this.props.frequency}</SevenSegmentNumber>
-                    <Knob axis="horizontal" onchange={this.onMajorKnobChange.bind(this)}>
-                        <Knob axis="vertical" onchange={this.onMinorKnobChange.bind(this)}/>
-                    </Knob>
-
+                    <dual-knob>
+                        <Knob axis="horizontal" className="major" onchange={this.onMajorKnobChange.bind(this)}/>
+                        <Knob axis="vertical" className="minor" onchange={this.onMinorKnobChange.bind(this)}/>
+                    </dual-knob>
                 </nav-radio>
         );
     }

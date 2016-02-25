@@ -71,7 +71,7 @@ export default class Knob extends React.Component {
     render() {
         let rotation = this.rotation;
         return (
-                <knob ref={ref => this.element = ref}
+                <knob className={this.props.className} ref={ref => this.element = ref}
                       style={{transform: 'rotate(' + rotation + 'turn)'}}
                 >{this.props.children}
                 </knob>
@@ -84,7 +84,8 @@ Knob.propTypes = {
     //rotation: React.PropTypes.number,
     axis: React.PropTypes.oneOf([AXIS_HORIZONTAL, AXIS_VERTICAL]).isRequired,
     children: React.PropTypes.any,
-    onchange: React.PropTypes.func
+    onchange: React.PropTypes.func,
+    className: React.PropTypes.string
 };
 
 Knob.defaultProps = {
