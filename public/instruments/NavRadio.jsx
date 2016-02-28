@@ -11,16 +11,21 @@ class NavRadio extends React.Component {
         let newValue = this.props.frequency + changedAmount;
         newValue = Math.min(newValue, this.props.max);
         newValue = Math.max(newValue, this.props.min);
+        console.log("Major knob change");
         this.onNewValue(newValue);
     }
 
     onMinorKnobChange(changedAmount) {
-        let fraction = this.props.frequency - Math.floor(this.props.frequency);
-        let newFraction = fraction + changedAmount / 10 / 100;
-        console.log("frequency", this.props.frequency, "fraction =", fraction, "newFraction", newFraction);
-        newFraction = Math.min(newFraction, 1);
-        newFraction = Math.max(newFraction, 0);
-        let newValue = this.props.frequency + newFraction;
+        let oldFraction = this.props.frequency - Math.floor(this.props.frequency);
+        let movedFraction = Math.sign(changedAmount) * 5 / 100;
+        let newFraction = oldFraction + movedFraction;
+        //console.log("changedAmount", changedAmount, "oldFraction", oldFraction, "movedFraction", movedFraction, "newFraction", newFraction);
+        if (newFraction > 95) {
+            newFraction = 95;
+        } else if (newFraction < 0) {
+            newFraction = 0;
+        }
+        let newValue = this.props.frequency - oldFraction + newFraction;
         this.onNewValue(newValue);
     }
 

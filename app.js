@@ -6,7 +6,7 @@ var client = dgram.createSocket("udp4");
 var serverIp = process.env["serverIp"] || "localhost";
 
 //var outputWs = require("./server");
-var sendMsg = function (dataref) {
+var sendRREFMessage = function (dataref) {
     // Sim/cockpit/radios/nav1 freq hz
     // sim/cockpit/radios/adf1_dme_dist_m
     var outgoing = new Buffer(new Array(413));
@@ -17,6 +17,19 @@ var sendMsg = function (dataref) {
     console.log("Sending " + outgoing.length + " bytes");
     console.log(outgoing);
     dataref = undefined;
+    client.send(outgoing, 0, outgoing.length, 49000, serverIp, function(err) {
+        if (err) {
+            console.error("UDP client error sending to " + serverIp, err);
+        }
+    });
+};
+
+var sendRPOSMessage = function() {
+    var outgoing = new Buffer(new Array(9));
+    outgoing.write("RPOS\0");
+    outgoing.writeInt32LE(100, 5);
+    console.log("Sending " + outgoing.length + " bytes");
+    console.log(outgoing);
     client.send(outgoing, 0, outgoing.length, 49000, serverIp, function(err) {
         if (err) {
             console.error("UDP client error sending to " + serverIp, err);
@@ -40,7 +53,8 @@ var rl = readline.createInterface({
 });
 rl.on("line", function(cmd) {
     dataref = cmd.trim();
-    sendMsg(dataref);
+    sendRREFMessage(dataref);
+    //sendRPOSMessage();
     rl.prompt();
 }).on('close', function() {
     console.log('Have a great day!');

@@ -13,24 +13,28 @@ export default class Knob extends React.Component {
         this._rotation = 0;
     }
 
-    onDragStart() {
-        //console.log("dragStart");
+    onDragStart(evt) {
         let lastReportedMovement = 0;
-        let moved = 0;
+        let clientSize = this.props.axis === AXIS_HORIZONTAL ? evt.clientX : evt.clientY;
+        let dragStart = {x: evt.clientX, y: evt.clientY};
+        console.log("dragStart =", dragStart);
+        let startMoveFrom0 = this.props.axis === AXIS_HORIZONTAL ? evt.offsetX : evt.offsetY;
+        let startMoveFromCenter = Math.abs(startMoveFrom0 - clientSize/2);
         let mouseMoveEventListener = function(evt) {
             if (evt.buttons == 0) {
                 window.removeEventListener("mousemove", mouseMoveEventListener, true);
             } else {
                 let deltaAxis = Math.abs(evt.movementX) > Math.abs(evt.movementY) ? AXIS_HORIZONTAL : AXIS_VERTICAL;
                 if (deltaAxis == this.props.axis) {
-                    let delta = this.props.axis === AXIS_HORIZONTAL ? evt.movementX : evt.movementY;
-                    moved += delta;
-                    if (Math.abs(moved - lastReportedMovement) > 10) {
-                        lastReportedMovement = moved;
-                        this.onChange(Math.round(moved / 10));
+                    //let delta = this.props.axis === AXIS_HORIZONTAL ? evt.movementX : evt.movementY * -1;
+                    let delta = deltaAxis == AXIS_HORIZONTAL ? evt.clientX - dragStart.x : evt.clientY - dragStart.y;
+                    if (Math.abs(delta - lastReportedMovement) > 10) {
+                        let movedPoints = Math.round((delta - lastReportedMovement) / 10);
+                        lastReportedMovement = delta;
+                        console.log("movedPoints =", movedPoints);
+                        this.onChange(movedPoints);
                     }
-                    this.rotation += (0.01 * delta);
-                    //console.log("Rotasjon", this.rotation, "akse", this.props.axis, evt.movementX, evt.movementY);
+                    this.rotation += (0.001 * (deltaAxis == AXIS_HORIZONTAL ? evt.movementX : evt.movementY) );
 
                 }
                 if(evt.stopPropagation) evt.stopPropagation();
@@ -41,10 +45,10 @@ export default class Knob extends React.Component {
             }
         }.bind(this);
         window.addEventListener("mousemove", mouseMoveEventListener, true);
+        return true;
     }
 
     onChange(changedAmount) {
-        console.log("changedAmount =", changedAmount);
         if (this.props.onchange) {
             this.props.onchange(changedAmount);
         }
@@ -60,7 +64,7 @@ export default class Knob extends React.Component {
     }
 
     componentDidMount() {
-        this.element.addEventListener("mousedown", this.onDragStart.bind(this, event));
+        this.element.addEventListener("mousedown", event => this.onDragStart(event));
         this.rotation = 0;
     }
 
@@ -85,10 +89,12 @@ Knob.propTypes = {
     axis: React.PropTypes.oneOf([AXIS_HORIZONTAL, AXIS_VERTICAL]).isRequired,
     children: React.PropTypes.any,
     onchange: React.PropTypes.func,
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
+    deadZone: React.PropTypes.number.isRequired
 };
 
 Knob.defaultProps = {
     //rotation: 0.2,
-    axis: "horizontal"
+    axis: "horizontal",
+    deadZone: 90
 };
