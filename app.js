@@ -42,7 +42,7 @@ server.on("error", function (err) {
     server.close();
 });
 
-server.on("message", function (msg, rinfo) {
+client.on("message", function (msg, rinfo) {
     console.log("Receiving", msg);
 });
 
