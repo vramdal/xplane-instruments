@@ -4,11 +4,24 @@ import { connect } from 'react-redux';
 
 class WebSocket extends React.Component {
 
+    constructor() {
+        super();
+        this.queue = [];
+    }
+
     componentDidMount() {
         this.props.handleStatusChange("connecting");
         this.ws = new window.WebSocket(this.props.url, this.props.protocol);
         this.ws.onmessage = event => {if (this.props.handleMessage) {this.props.handleMessage(event.data)}};
-        this.ws.onopen = event => {this.props.handleStatusChange("connected")};
+        this.ws.onopen = event => {
+            this.props.handleStatusChange("connected");
+            var queued = this.queue.shift();
+            while (queued) {
+                this.ws.send(JSON.stringify(queued));
+                queued = this.queue.shift();
+            }
+            this.queue = undefined;
+        };
         this.ws.onclose = event => {this.props.handleStatusChange("disconnected")};
     }
 
@@ -19,6 +32,14 @@ class WebSocket extends React.Component {
         ) : <div></div>;
     }
 
+    send(msg) {
+        if (this.queue) {
+            this.queue.push(msg);
+        } else {
+            this.ws.send(JSON.stringify(msg));
+        }
+    }
+
 }
 
 WebSocket.propTypes = {
@@ -26,17 +47,12 @@ WebSocket.propTypes = {
     url: React.PropTypes.string.isRequired,
     handleStatusChange: React.PropTypes.func.isRequired,
     displayStatus: React.PropTypes.bool,
-    protocol: React.PropTypes.string
+    protocol: React.PropTypes.string,
+    websocketStatus: React.PropTypes.string
 };
 
 WebSocket.defaultProps = {
     displayStatus: false
 };
 
-function model(state) {
-    return {
-        websocketStatus: state.connectionState.status
-    }
-}
-
-export default connect(model)(WebSocket);
+export default WebSocket;

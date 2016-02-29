@@ -16,7 +16,6 @@ var sendRREFMessage = function (dataref) {
     outgoing.write(dataref + "\0", 13);
     console.log("Sending " + outgoing.length + " bytes");
     console.log(outgoing);
-    dataref = undefined;
     client.send(outgoing, 0, outgoing.length, 49000, serverIp, function(err) {
         if (err) {
             console.error("UDP client error sending to " + serverIp, err);
@@ -37,6 +36,24 @@ var sendRPOSMessage = function() {
     });
 };
 
+var dataRef;
+var sendDatarefValue = function(dataref, value) {
+    // sim/cockpit/radios/nav1_freq_hz
+    // sim/cockpit/radios/adf1_dme_dist_m
+    var outgoing = new Buffer(new Array(509));
+    outgoing.write("DREF\0");
+    outgoing.writeFloatLE(value, 5);
+    outgoing.write(dataref + "\0", 9);
+    console.log("Sending " + outgoing.length + " bytes");
+    console.log(outgoing);
+    client.send(outgoing, 0, outgoing.length, 49000, serverIp, function(err) {
+        if (err) {
+            console.error("UDP client error sending to " + serverIp, err);
+        }
+    });
+
+}
+
 server.on("error", function (err) {
     console.log("server error:\n" + err.stack);
     server.close();
@@ -52,8 +69,13 @@ var rl = readline.createInterface({
     output: process.stdout
 });
 rl.on("line", function(cmd) {
-    dataref = cmd.trim();
-    sendRREFMessage(dataref);
+    var entered = cmd.trim();
+    if (isNaN(parseFloat(entered))) {
+        dataRef = entered;
+        sendRREFMessage(entered);
+    } else {
+        sendDatarefValue(dataRef, parseFloat(entered));
+    }
     //sendRPOSMessage();
     rl.prompt();
 }).on('close', function() {

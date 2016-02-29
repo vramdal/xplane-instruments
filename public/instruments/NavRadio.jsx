@@ -29,10 +29,12 @@ class NavRadio extends React.Component {
         this.onNewValue(newValue);
     }
 
+    getDataRef() {
+        return this.props.dataRef;
+    }
+
     onNewValue(newValue) {
-        this.props.dispatch(
-                dataRefValueChangedOnClient(this.props.dataRefId, newValue)
-        );
+        this.props.onuserchanged(this, newValue);
     }
 
     render() {
@@ -63,8 +65,8 @@ function model(state, ownProps) {
 NavRadio.propTypes = {
     frequency: React.PropTypes.number,
     onchange: React.PropTypes.func,
-    dataRefId: React.PropTypes.string,
-    dispatch: React.PropTypes.func,
+    dataRef: React.PropTypes.string,
+    onuserchanged: React.PropTypes.func,
     max: React.PropTypes.number,
     min: React.PropTypes.number
 };
@@ -74,4 +76,5 @@ NavRadio.defaultProps = {
     min: 100
 };
 
-export default connect(model)(NavRadio);
+//export default connect(model)(NavRadio);
+export default NavRadio;
