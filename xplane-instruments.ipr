@@ -23,6 +23,9 @@
   <component name="Encoding">
     <file url="PROJECT" charset="UTF-8" />
   </component>
+  <component name="EntryPointsManager">
+    <entry_points version="2.0" />
+  </component>
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
@@ -201,6 +204,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/udp-test/udp-test.iml" filepath="$PROJECT_DIR$/udp-test/udp-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/xplane-instruments.iml" filepath="$PROJECT_DIR$/xplane-instruments.iml" />
     </modules>
   </component>

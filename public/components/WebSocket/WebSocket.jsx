@@ -17,7 +17,7 @@ class WebSocket extends React.Component {
             this.props.handleStatusChange("connected");
             var queued = this.queue.shift();
             while (queued) {
-                this.ws.send(JSON.stringify(queued));
+                this.ws.send(queued);
                 queued = this.queue.shift();
             }
             this.queue = undefined;
@@ -32,11 +32,11 @@ class WebSocket extends React.Component {
         ) : <div></div>;
     }
 
-    send(msg) {
+    send() {
         if (this.queue) {
-            this.queue.push(msg);
+            this.queue.push(JSON.stringify(Array.prototype.slice.call(arguments)));
         } else {
-            this.ws.send(JSON.stringify(msg));
+            this.ws.send(JSON.stringify(Array.prototype.slice.call(arguments)));
         }
     }
 

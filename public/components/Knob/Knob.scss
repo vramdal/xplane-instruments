@@ -6,7 +6,14 @@ knob {
   display: flex;
   justify-content: center;
   align-items: center;
+}
 
+knob.vertical-axis {
+  cursor: row-resize;
+}
+
+knob.horizontal-axis {
+  cursor: col-resize;
 }
 
 dual-knob {

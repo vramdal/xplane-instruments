@@ -3,9 +3,13 @@ import './NavRadio.scss';
 import Knob from '../components/Knob/Knob.jsx';
 import SevenSegmentNumber from '../components/SevenSegment/SevenSegmentNumber.jsx';
 import { connect } from 'react-redux';
-import { dataRefValueChangedOnClient } from '../actions/DataRefActions';
+import { dataRefValueChangedOnClient, subscribeToDataRef } from '../actions/DataRefActions';
 
 class NavRadio extends React.Component {
+
+    componentDidMount() {
+        this.props.dispatch(subscribeToDataRef(this.props.dataRef, 1));
+    }
 
     onMajorKnobChange(changedAmount) {
         let newValue = this.props.frequency + changedAmount;
@@ -56,7 +60,7 @@ function model(state, ownProps) {
     let dataRefId = ownProps["dataRefId"];
     if (dataRefId) {
         return {
-            frequency: state.dataRef[dataRefId]
+            value: state.xplane.subscriptions[dataRefId] ? state.xplane.subscriptions[dataRefId].value : undefined
         }
     }
     return {};
@@ -68,7 +72,8 @@ NavRadio.propTypes = {
     dataRef: React.PropTypes.string,
     onuserchanged: React.PropTypes.func,
     max: React.PropTypes.number,
-    min: React.PropTypes.number
+    min: React.PropTypes.number,
+    value: React.PropTypes.number
 };
 
 NavRadio.defaultProps = {
@@ -76,5 +81,5 @@ NavRadio.defaultProps = {
     min: 100
 };
 
-//export default connect(model)(NavRadio);
-export default NavRadio;
+export default connect(model)(NavRadio);
+//export default NavRadio;

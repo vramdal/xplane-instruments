@@ -36,6 +36,10 @@ var sendRPOSMessage = function() {
     });
 };
 
+export function sendMessage(message) {
+    // TODO
+}
+
 var dataRef;
 var sendDatarefValue = function(dataref, value) {
     // sim/cockpit/radios/nav1_freq_hz
