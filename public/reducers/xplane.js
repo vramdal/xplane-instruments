@@ -14,7 +14,7 @@ export function xplane(state = {subscriptions: [] , values: {}}, action) {
                     }
                 }
             }
-            let internalId = state.subscriptions.length;
+            let internalId = state.subscriptions.length + 1;
             result.subscriptions.push({
                 dataRef: action.dataRef,
                 frequency: action.frequency,
@@ -23,15 +23,15 @@ export function xplane(state = {subscriptions: [] , values: {}}, action) {
             return result;
         }
         case DATAREF_VALUE_CHANGED_IN_XPLANE: {
-            let internalKey = action.internalKey + "";
-            if (state.subscriptions[internalKey]) {
-                let dataRef = state.subscriptions[internalKey].dataRef;
-                if (action.newValue !== result.values[dataRef]) {
-                    result.values[dataRef] = action.newValue;
-                    return result;
+            let internalId = action.internalId;
+            let matchingSubscriptions = state.subscriptions.filter(subscription => subscription.internalId === internalId);
+            matchingSubscriptions.forEach(subscription => {
+                if (result.values[subscription.dataRef] === undefined || action.newValue !== result.values[subscription.dataRef].value) {
+                    result.values[subscription.dataRef] = Object.assign({}, {value: action.newValue});
                 }
-            }
-            return state;
+            });
+            result.values = Object.assign({}, result.values);
+            return result;
         }
     }
     return state;

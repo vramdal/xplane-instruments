@@ -29,10 +29,10 @@ export function dataRefValueChangedOnClient(dataRefIdString, newValue) {
     }
 }
 
-export function dataRefValueChangedInPlane(internalKey, newValue) {
+export function dataRefValueChangedInXPlane(internalId, newValue) {
     return {
         type: DATAREF_VALUE_CHANGED_IN_XPLANE,
-        internalKey: internalKey,
+        internalId: internalId,
         newValue: newValue
     }
 }

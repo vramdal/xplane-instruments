@@ -36,7 +36,7 @@ var sendRPOSMessage = function() {
     });
 };
 
-export function sendMessage(message) {
+function sendMessage(message) {
     // TODO
 }
 

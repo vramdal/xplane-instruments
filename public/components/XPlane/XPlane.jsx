@@ -2,6 +2,7 @@ import React from 'react';
 import WebSocket from '../WebSocket/WebSocket.jsx';
 import { connect } from 'react-redux';
 import {onWebsocketStatusChange} from '../../actions/WebsocketAction';
+import {dataRefValueChangedInXPlane} from '../../actions/DataRefActions';
 
 class XPlane extends React.Component {
 
@@ -64,7 +65,9 @@ class XPlane extends React.Component {
 
 
     handleWebSocketMessage(data) {
-        console.log("Melding fra webSocket", data);
+        data = JSON.parse(data);
+        //console.log("Melding fra webSocket", data);
+        this.props.dispatch(dataRefValueChangedInXPlane(data[1], data[2]));
     }
 
     render() {

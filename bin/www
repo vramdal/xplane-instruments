@@ -4,7 +4,11 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var express = require("express");
+var app = express();
+
+//var app = require('../app');
+app.use(express.static('public'));
 var debug = require('debug')('xplane-instruments:server');
 var http = require('http');
 

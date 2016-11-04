@@ -50,7 +50,9 @@ export default class Main extends React.Component {
                             <NavRadio dataRef="sim/cockpit/radios/nav2_freq_hz"/>
                         </Panel>
                         <Panel title="DME">
-                            <DME></DME>
+                            <DME dataRef="sim/cockpit/radios/adf1_dme_dist_m"></DME>
+                            <DME dataRef="sim/cockpit/radios/adf2_dme_dist_m"></DME>
+                            {/*<DME dataRef="sim/cockpit/radios/transponder_code"></DME>*/}
 
                         </Panel>
                     </div>
@@ -60,5 +62,5 @@ export default class Main extends React.Component {
 
 }
 
-let store = createStore(combinedReducer);
+const store = createStore(combinedReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());;
 ReactDOM.render(<Main/>, document.getElementById('app'));
