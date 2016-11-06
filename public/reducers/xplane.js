@@ -1,6 +1,11 @@
 import { SUBSCRIBING_TO_DATAREF, DATAREF_VALUE_CHANGED_ON_CLIENT, DATAREF_VALUE_CHANGED_IN_XPLANE } from '../actions/DataRefActions';
 
-export function xplane(state = {subscriptions: [] , values: {}}, action) {
+export function xplane(state = {
+    subscriptions: [] ,
+    values: {"sim/cockpit/radios/nav1_freq_hz": {value: 123, confirmed: true}},
+    dirtyValues: {},
+    datarefTimestamps: {}
+}, action) {
     let result = Object.assign({}, state);
     switch (action.type) {
         case SUBSCRIBING_TO_DATAREF: {
@@ -23,14 +28,45 @@ export function xplane(state = {subscriptions: [] , values: {}}, action) {
             return result;
         }
         case DATAREF_VALUE_CHANGED_IN_XPLANE: {
+            let changed = false;
             let internalId = action.internalId;
             let matchingSubscriptions = state.subscriptions.filter(subscription => subscription.internalId === internalId);
             matchingSubscriptions.forEach(subscription => {
-                if (result.values[subscription.dataRef] === undefined || action.newValue !== result.values[subscription.dataRef].value) {
-                    result.values[subscription.dataRef] = Object.assign({}, {value: action.newValue});
+                if (result.values[subscription.dataRef] !== action.newValue) {
+                    result.values[subscription.dataRef] = Object.assign({}, {
+                        value: action.newValue,
+                        timestamp: action.timestamp,
+                        confirmed: true
+                    });
+                    if (result.dirtyValues[subscription.dataRef] && (state.datarefTimestamps[subscription.dataRef] || 0) < action.timestamp) {
+                        let dirtyValues = Object.assign({}, result.dirtyValues);
+                        delete dirtyValues[subscription.dataRef];
+                        result.dirtyValues = dirtyValues;
+                    }
+                }
+                result.datarefTimestamps = Object.assign({}, state.datarefTimestamps, {[subscription.dataRef]: action.timestamp});
+                result.values = Object.assign({}, result.values);
+                changed = true;
+            });
+            if (changed) {
+                return result;
+            } else {
+                return state;
+            }
+        }
+        case DATAREF_VALUE_CHANGED_ON_CLIENT: {
+            result.values[action.dataRef] = Object.assign({}, {
+                value: action.value,
+                timestamp: action.timestamp,
+                confirmed: false
+            });
+            result.dirtyValues = Object.assign({}, {
+                [action.dataRef]: {
+                    value: action.value,
+                    timestamp: action.timestamp
                 }
             });
-            result.values = Object.assign({}, result.values);
+
             return result;
         }
     }

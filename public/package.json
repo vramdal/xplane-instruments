@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "tunnel": "lt --port 3000"
   },
   "dependencies": {
     "body-parser": "~1.13.2",

@@ -8,7 +8,7 @@ import { subscribeToDataref } from '../components/Lang/DatarefHOC.jsx';
 export class NavRadio extends React.Component {
 
     onMajorKnobChange(changedAmount) {
-        let newValue = this.props.value + changedAmount;
+        let newValue = this.props.datarefValue + changedAmount;
         newValue = Math.min(newValue, this.props.max);
         newValue = Math.max(newValue, this.props.min);
         console.log("Major knob change");
@@ -16,16 +16,15 @@ export class NavRadio extends React.Component {
     }
 
     onMinorKnobChange(changedAmount) {
-        let oldFraction = this.props.value - Math.floor(this.props.value);
+        let oldFraction = this.props.datarefValue - Math.floor(this.props.datarefValue);
         let movedFraction = Math.sign(changedAmount) * 5 / 100;
         let newFraction = oldFraction + movedFraction;
-        //console.log("changedAmount", changedAmount, "oldFraction", oldFraction, "movedFraction", movedFraction, "newFraction", newFraction);
         if (newFraction > 95) {
             newFraction = 95;
         } else if (newFraction < 0) {
             newFraction = 0;
         }
-        let newValue = this.props.value - oldFraction + newFraction;
+        let newValue = this.props.datarefValue - oldFraction + newFraction;
         this.onNewValue(newValue);
     }
 
@@ -34,7 +33,7 @@ export class NavRadio extends React.Component {
     }
 
     onNewValue(newValue) {
-        this.props.onuserchanged(this, newValue);
+        this.props.onChangedOnClient(newValue);
     }
 
     render() {

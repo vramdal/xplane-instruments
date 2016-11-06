@@ -1,0 +1,40 @@
+pulsing-orb {
+  text-decoration: none;
+  transition: all 0.5s;
+  font-size: 0.5em;
+  visibility: hidden;
+}
+
+pulsing-orb.visible {
+  visibility: visible;
+}
+
+pulsing-orb[color='white'] {
+  color: #fff;
+}
+
+pulsing-orb[color='blue'] {
+  color: #FF1177;
+}
+
+pulsing-orb.pulsing {
+  font-family: Monoton;
+  animation: neon1 1.0s ease-in-out infinite alternate;
+}
+
+pulsing-orb.single-pulse {
+  animation: neon1 0.5s ease-in-out 0.3 alternate;
+  visibility: visible;
+  color: #fff;
+}
+
+@keyframes neon1 {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF1177, 0 0 70px #FF1177, 0 0 80px #FF1177, 0 0 100px #FF1177, 0 0 150px #FF1177;
+    opacity: 0;
+  }
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FF1177, 0 0 35px #FF1177, 0 0 40px #FF1177, 0 0 50px #FF1177, 0 0 75px #FF1177;
+    opacity: 1
+  }
+}

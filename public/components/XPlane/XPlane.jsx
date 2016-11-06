@@ -16,29 +16,59 @@ class XPlane extends React.Component {
     }
 
     handleWebSocketStatusChange(status) {
-        this.props.dispatch(onWebsocketStatusChange(status));
+        this.props.onWebsocketStatusChange(status);
     }
 
     componentWillMount() {
+        this.dummyValue = 1;
+/*
+        this.dummyInterval = window.setInterval(() => {
+            this.props.dataRefValueChangedInXPlane(3, this.dummyValue++);
+        }, 1000);
+*/
+    }
+
+    componentWillUnmount() {
+        window.clearInterval(this.dummyInterval);
     }
 
     componentWillReceiveProps(nextProps) {
-        let nextSubscriptions = nextProps.subscriptions.slice();
-        let oldSubscriptions = this.props.subscriptions.slice();
+        // TODO: Skille ut subscriptions i egen komponent (SubscriberRegistry?)
+        let nextSubscriptions = nextProps.subscriptions;
+        let oldSubscriptions = this.props.subscriptions;
 
-        var addedSubscriptions = this.findAddedSubscriptions(nextSubscriptions, oldSubscriptions);
-        let removedSubscriptions = this.findRemovedSubscriptions(nextSubscriptions, oldSubscriptions);
+        if (nextSubscriptions !== oldSubscriptions) {
+            console.warn("Nye subscriptions");
 
-        for (let subscription of addedSubscriptions) {
-            this.websocket.send(413, "RREF\0", subscription.frequency, subscription.internalId, subscription.dataRef + "\0");
+            var addedSubscriptions = this.findAddedSubscriptions(nextSubscriptions, oldSubscriptions);
+            let removedSubscriptions = this.findRemovedSubscriptions(nextSubscriptions, oldSubscriptions);
+
+            for (let subscription of addedSubscriptions) {
+                this.websocket.send(413, "RREF\0", subscription.frequency, subscription.internalId, subscription.dataRef + "\0");
+            }
+
+            for (let subscription of removedSubscriptions) {
+                this.websocket.send("RREF", 0, subscription.internalId, subscription.dataRef);
+            }
+
+            console.log("addedSubscriptions =", addedSubscriptions, nextSubscriptions);
+            console.log("removedSubscriptions =", removedSubscriptions);
         }
 
-        for (let subscription of removedSubscriptions) {
-            this.websocket.send("RREF", 0, subscription.internalId, subscription.dataRef);
-        }
+        let nextDirtyValues = nextProps.dirtyValues;
+        let oldDirtyValues = this.props.dirtyValues;
 
-        console.log("addedSubscriptions =", addedSubscriptions, nextSubscriptions);
-        console.log("removedSubscriptions =", removedSubscriptions);
+        if (nextDirtyValues !== oldDirtyValues) {
+
+            for (let dataref in nextProps.dirtyValues) {
+                if (!nextProps.dirtyValues.hasOwnProperty(dataref)) {
+                    continue;
+                }
+                let value = nextProps.dirtyValues[dataref].value;
+                // TODO: DREF0+(4byte byte value of 1)+ sim/cockpit/switches/anti_ice_surf_heat_left+0+spaces to complete to 509 bytes
+                this.websocket.send("DREF\0", value, dataref);
+            }
+        }
     }
 
     findAddedSubscriptions(nextSubscriptions, oldSubscriptions) {
@@ -67,7 +97,7 @@ class XPlane extends React.Component {
     handleWebSocketMessage(data) {
         data = JSON.parse(data);
         //console.log("Melding fra webSocket", data);
-        this.props.dispatch(dataRefValueChangedInXPlane(data[1], data[2]));
+        this.props.dataRefValueChangedInXPlane(data[1], data[2]);
     }
 
     render() {
@@ -78,10 +108,21 @@ class XPlane extends React.Component {
             }
             subscriptions.push(<li key={internalId}>{this.props.subscriptions[internalId].dataRef}</li>)
         }
+        let dirtyValues = [];
+        for (let dataRef in this.props.dirtyValues) {
+            if (!this.props.subscriptions.hasOwnProperty(dataRef)) {
+                continue;
+            }
+            dirtyValues.push(<li key={dataRef}>{this.props.dirtyValues[dataRef]}</li>)
+
+        }
         return (
                 <div>
                     <ol>
                         {subscriptions}
+                    </ol>
+                    <ol>
+                        {dirtyValues}
                     </ol>
                     <WebSocket url="ws://localhost:8080"
                                protocol="xplane"
@@ -98,16 +139,17 @@ class XPlane extends React.Component {
 
 function model(state) {
     return {
-        subscriptions: state.xplane.subscriptions.slice(),
-        numSubscriptions: state.xplane.subscriptions.length
+        subscriptions: state.xplane.subscriptions,
+        numSubscriptions: state.xplane.subscriptions.length,
+        dirtyValues: state.xplane.dirtyValues
     }
 
 }
 
 XPlane.propTypes = {
-    //host: React.PropTypes.string.isRequired,
     subscriptions: React.PropTypes.array,
-    dispatch: React.PropTypes.func
+    dispatch: React.PropTypes.func,
+    dirtyValues: React.PropTypes.object
 };
 
-export default connect(model)(XPlane);
+export default connect(model, {onWebsocketStatusChange, dataRefValueChangedInXPlane})(XPlane);

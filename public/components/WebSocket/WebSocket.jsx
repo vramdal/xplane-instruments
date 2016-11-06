@@ -33,6 +33,7 @@ class WebSocket extends React.Component {
     }
 
     send() {
+        console.trace("WebSocket.send", arguments);
         if (this.queue) {
             this.queue.push(JSON.stringify(Array.prototype.slice.call(arguments)));
         } else {

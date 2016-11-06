@@ -25,7 +25,8 @@ export function dataRefValueChangedOnClient(dataRefIdString, newValue) {
     return {
         type: DATAREF_VALUE_CHANGED_ON_CLIENT,
         dataRef: dataRefIdString,
-        value: newValue
+        value: newValue,
+        timestamp: new Date().getTime()
     }
 }
 
@@ -33,6 +34,7 @@ export function dataRefValueChangedInXPlane(internalId, newValue) {
     return {
         type: DATAREF_VALUE_CHANGED_IN_XPLANE,
         internalId: internalId,
-        newValue: newValue
+        newValue: newValue,
+        timestamp: new Date().getTime()
     }
 }
