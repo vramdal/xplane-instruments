@@ -56,7 +56,9 @@ export default class Knob extends React.Component {
 
     set rotation(turns) {
         this._rotation = turns;
-        this.element.style.transform = "rotate(" + this._rotation + "turn)";
+        if (this.element) {
+            this.element.style.transform = "rotate(" + this._rotation + "turn)";
+        }
     }
 
     get rotation() {
