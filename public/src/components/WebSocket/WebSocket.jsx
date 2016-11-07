@@ -1,6 +1,6 @@
 import React from 'react';
 import ConnectionStatus from '../ConnectionStatus/ConnectionStatus.jsx';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
 class WebSocket extends React.Component {
 
@@ -11,8 +11,17 @@ class WebSocket extends React.Component {
 
     componentDidMount() {
         this.props.handleStatusChange("connecting");
+        this._createAndOpenWebsocket();
+    }
+
+    _createAndOpenWebsocket() {
         this.ws = new window.WebSocket(this.props.url, this.props.protocol);
-        this.ws.onmessage = event => {if (this.props.handleMessage) {this.props.handleMessage(event.data)}};
+        this.ws.onmessage = event => {
+            console.log("Mottok WS-melding: ", event.data);
+            if (this.props.handleMessage) {
+                this.props.handleMessage(event.data)
+            }
+        };
         this.ws.onopen = event => {
             this.props.handleStatusChange("connected");
             var queued = this.queue.shift();
@@ -22,13 +31,19 @@ class WebSocket extends React.Component {
             }
             this.queue = undefined;
         };
-        this.ws.onclose = event => {this.props.handleStatusChange("disconnected")};
+        this.ws.onclose = event => {
+            this.props.handleStatusChange("disconnected");
+            if (this.props.reOpenOnClose) {
+                window.setTimeout(() => this._createAndOpenWebsocket(), 2000);
+            }
+
+        };
     }
 
     render() {
         console.log("this.props.status =", this.props.websocketStatus);
         return this.props.displayStatus ? (
-                <ConnectionStatus status={this.props.websocketStatus}>WebSocket </ConnectionStatus>
+            <ConnectionStatus status={this.props.websocketStatus}>{this.props.children}</ConnectionStatus>
         ) : <div></div>;
     }
 
@@ -49,11 +64,13 @@ WebSocket.propTypes = {
     handleStatusChange: React.PropTypes.func.isRequired,
     displayStatus: React.PropTypes.bool,
     protocol: React.PropTypes.string,
-    websocketStatus: React.PropTypes.string
+    websocketStatus: React.PropTypes.string,
+    reOpenOnClose: React.PropTypes.bool
 };
 
 WebSocket.defaultProps = {
-    displayStatus: false
+    displayStatus: false,
+    reOpenOnClose: true
 };
 
 export default WebSocket;

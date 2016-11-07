@@ -1,9 +1,17 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var dgram = require("dgram");
+const XPLANE_IP = '10.0.1.12';
+const XPLANE_PORT = 49000;
 
 
 var udpClient = dgram.createSocket("udp4");
+
+/*
+var discovery = require("./discovery");
+
+discovery();
+*/
 
 var sendUdpMessage = function () {
     var bufferSize = arguments[0];
@@ -19,9 +27,11 @@ var sendUdpMessage = function () {
             offset += 4
         }
     }
-    console.log("Sending " + outgoing.length + " bytes");
+    console.log("UDP Sending " + outgoing.length + " bytes");
     console.log(outgoing);
-    udpClient.send(outgoing, 0, outgoing.length, 49000, 'localhost', function(err) {
+
+
+    udpClient.send(outgoing, 0, outgoing.length, XPLANE_PORT, XPLANE_IP, function(err) {
         if (err) {
             console.error("UDP client error sending to " + serverIp, err);
         }
@@ -49,13 +59,18 @@ wsServer = new WebSocketServer({
 });
 
 udpClient.on("message", function (buffer, rinfo) {
-    //console.log("Receiving UDP", msg);
+    //console.log("UDP receive");
+    console.log("Receiving UDP", buffer);
     var msgType = buffer.toString('ascii', 0, 4);
     var internalRef = buffer.readInt32LE(5);
     var value = buffer.readInt32LE(9);
     var payload = [msgType, internalRef, value];
-    console.log("Broadcasting WS", payload);
-    wsServer.broadcastUTF(JSON.stringify(payload));
+    var payloadStr = JSON.stringify(payload);
+    //if (payloadStr !== this.lastPayloadStr) {
+        console.log("WS Broadcasting", payload);
+    //}
+    wsServer.broadcastUTF(payloadStr);
+    this.lastPayloadStr = payloadStr;
 });
 
 
@@ -83,16 +98,18 @@ wsServer.on('request', function(request) {
 
     this.connection = request.accept('xplane', request.origin);
     console.log((new Date()) + ' Connection accepted.');
+    // TODO: Send XPlane-connection-data til klienten
+    wsServer.broadcastUTF(JSON.stringify({type: 'PROXY-META', XPLANE_IP, XPLANE_PORT}));
     this.connectionIdx = wsClients.push(this.connection) - 1;
     var _this = this;
     this.connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data);
+            console.log('WS Received Message: ' + message.utf8Data);
             sendUdpMessage.apply(_this, JSON.parse(message.utf8Data));
             //_this.connection.sendUTF(message.utf8Data);
         }
         else if (message.type === 'binary') {
-            console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+            console.log('WS Received Binary Message of ' + message.binaryData.length + ' bytes');
             _this.connection.sendBytes(message.binaryData);
         }
     });

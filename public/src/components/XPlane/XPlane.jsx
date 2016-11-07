@@ -13,7 +13,9 @@ class XPlane extends React.Component {
         let nextSubscriptions = props.subscriptions;
         let addedSubscriptions = this.findAddedSubscriptions(nextSubscriptions, []);
         console.log("addedSubscriptions on constructor =", addedSubscriptions, nextSubscriptions);
+        this.state = {};
     }
+
 
     handleWebSocketStatusChange(status) {
         this.props.onWebsocketStatusChange(status);
@@ -66,7 +68,7 @@ class XPlane extends React.Component {
                 }
                 let value = nextProps.dirtyValues[dataref].value;
                 // TODO: DREF0+(4byte byte value of 1)+ sim/cockpit/switches/anti_ice_surf_heat_left+0+spaces to complete to 509 bytes
-                this.websocket.send("DREF\0", value, dataref);
+                this.websocket.send(509, "DREF\0", value, dataref + "\0");
             }
         }
     }
@@ -96,6 +98,9 @@ class XPlane extends React.Component {
 
     handleWebSocketMessage(data) {
         data = JSON.parse(data);
+        if (data.type === "PROXY-META") {
+            this.setState({"websocketText": data.XPLANE_IP + ":" + data.XPLANE_PORT })
+        }
         //console.log("Melding fra webSocket", data);
         this.props.dataRefValueChangedInXPlane(data[1], data[2]);
     }
@@ -129,7 +134,8 @@ class XPlane extends React.Component {
                                handleStatusChange={this.handleWebSocketStatusChange.bind(this)}
                                handleMessage={this.handleWebSocketMessage.bind(this)}
                                displayStatus={true} ref={ref => this.websocket = ref}
-                    />
+                               websocketStatus={this.props.websocketStatus}
+                    >{this.state.websocketText}</WebSocket>
                 </div>
 
         );
@@ -141,7 +147,8 @@ function model(state) {
     return {
         subscriptions: state.xplane.subscriptions,
         numSubscriptions: state.xplane.subscriptions.length,
-        dirtyValues: state.xplane.dirtyValues
+        dirtyValues: state.xplane.dirtyValues,
+        websocketStatus: state.connectionState.status
     }
 
 }

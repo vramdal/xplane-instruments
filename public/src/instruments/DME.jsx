@@ -6,7 +6,6 @@ import { subscribeToDataref } from '../components/Lang/DatarefHOC.jsx';
 class DME extends React.Component {
 
     render() {
-        console.log("DME.props", this.props);
         return (
                 <instrument className="DME">
                     <SevenSegmentNumber className="DME" max={999} numDecimals={2} nanText="NaN" zeroPadding={false}>{this.props.datarefValue}</SevenSegmentNumber>
