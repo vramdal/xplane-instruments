@@ -17,7 +17,7 @@ class WebSocket extends React.Component {
     _createAndOpenWebsocket() {
         this.ws = new window.WebSocket(this.props.url, this.props.protocol);
         this.ws.onmessage = event => {
-            console.log("Mottok WS-melding: ", event.data);
+            //console.log("Mottok WS-melding: ", event.data);
             if (this.props.handleMessage) {
                 this.props.handleMessage(event.data)
             }

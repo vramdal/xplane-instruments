@@ -15,5 +15,10 @@
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
     "websocket": "^1.0.22"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "jasmine": "^2.5.2",
+    "mocha": "^3.1.2"
   }
 }

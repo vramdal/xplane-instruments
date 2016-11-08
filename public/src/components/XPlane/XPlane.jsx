@@ -2,7 +2,7 @@ import React from 'react';
 import WebSocket from '../WebSocket/WebSocket.jsx';
 import { connect } from 'react-redux';
 import {onWebsocketStatusChange} from '../../actions/WebsocketAction';
-import {dataRefValueChangedInXPlane} from '../../actions/DataRefActions';
+import {dataRefValueChangedInXPlane, dataValueChangedInXPlane} from '../../actions/DataRefActions';
 
 class XPlane extends React.Component {
 
@@ -46,7 +46,7 @@ class XPlane extends React.Component {
             let removedSubscriptions = this.findRemovedSubscriptions(nextSubscriptions, oldSubscriptions);
 
             for (let subscription of addedSubscriptions) {
-                this.websocket.send(413, "RREF\0", subscription.frequency, subscription.internalId, subscription.dataRef + "\0");
+                //this.websocket.send(413, "RREF\0", subscription.frequency, subscription.internalId, subscription.dataRef + "\0");
             }
 
             for (let subscription of removedSubscriptions) {
@@ -99,10 +99,15 @@ class XPlane extends React.Component {
     handleWebSocketMessage(data) {
         data = JSON.parse(data);
         if (data.type === "PROXY-META") {
-            this.setState({"websocketText": data.XPLANE_IP + ":" + data.XPLANE_PORT })
+            this.setState({"websocketText": "Assuming X-Plane at " + data.XPLANE_IP + ":" + data.XPLANE_PORT + ", listening to " + data.LOCAL_UDP_PORT })
+        } else {
+            //console.log("Melding fra webSocket", data);
+            let msgType = data[0];
+            switch(msgType) {
+                case "DREF": this.props.dataRefValueChangedInXPlane(data[1], data[2]); break;
+                case "DATA": this.props.dataValueChangedInXPlane(data[1], data[2])
+            }
         }
-        //console.log("Melding fra webSocket", data);
-        this.props.dataRefValueChangedInXPlane(data[1], data[2]);
     }
 
     render() {
@@ -159,4 +164,4 @@ XPlane.propTypes = {
     dirtyValues: React.PropTypes.object
 };
 
-export default connect(model, {onWebsocketStatusChange, dataRefValueChangedInXPlane})(XPlane);
+export default connect(model, {onWebsocketStatusChange, dataRefValueChangedInXPlane, dataValueChangedInXPlane})(XPlane);

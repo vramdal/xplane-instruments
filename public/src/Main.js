@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import DME from './instruments/DME.jsx';
 import Panel from './components/Panel/Panel.jsx';
 import NavRadio from './instruments/NavRadio.jsx';
+import Transponder from './instruments/Transponder.jsx';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import combinedReducer from './reducers';
@@ -45,9 +46,14 @@ export default class Main extends React.Component {
                     <div id="Main">
                         <h1>Dashboard</h1>
                         <XPlane/>
+                        <Panel title="Transponder">
+                           <Transponder dataRef="Sim/cockpit/radios/transponder code"/>
+                        </Panel>
                         <Panel title="Nav 1">
+                            USE:
                             <NavRadio dataRef="sim/cockpit/radios/nav1_freq_hz"/>
-                            <NavRadio dataRef="sim/cockpit/radios/nav2_freq_hz"/>
+                            STBY:
+                            <NavRadio dataRef="sim/cockpit/radios/nav1_stdby_freq_hz"/>
                         </Panel>
                         <Panel title="DME">
                             <DME dataRef="sim/cockpit/radios/adf1_dme_dist_m"></DME>

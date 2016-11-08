@@ -1,7 +1,29 @@
-import { SUBSCRIBING_TO_DATAREF, DATAREF_VALUE_CHANGED_ON_CLIENT, DATAREF_VALUE_CHANGED_IN_XPLANE } from '../actions/DataRefActions';
+import { SUBSCRIBING_TO_DATAREF, DATAREF_VALUE_CHANGED_ON_CLIENT, DATAREF_VALUE_CHANGED_IN_XPLANE, DATA_VALUE_CHANGED_IN_XPLANE } from '../actions/DataRefActions';
+import DatarefDefintions from '../definitions/datarefs';
+
+function saveValueFromXPlane(result, dataRef, newValue, timestamp) {
+    let changed = false;
+    if (result.values[dataRef] !== newValue) {
+        result.values[dataRef] = Object.assign({}, {
+            value: newValue,
+            timestamp: timestamp,
+            confirmed: true
+        });
+        if (result.dirtyValues[dataRef] && (result.datarefTimestamps[dataRef] || 0) < timestamp) {
+            let dirtyValues = Object.assign({}, result.dirtyValues);
+            delete dirtyValues[dataRef];
+            result.dirtyValues = dirtyValues;
+        }
+        changed = true;
+    }
+    result.datarefTimestamps = Object.assign({}, result.datarefTimestamps, {[dataRef]: timestamp});
+    result.values = Object.assign({}, result.values);
+    return changed;
+}
 
 export function xplane(state = {
     subscriptions: [] ,
+    dataIdxs: {},
     values: {"sim/cockpit/radios/nav1_freq_hz": {value: 123, confirmed: true}},
     dirtyValues: {},
     datarefTimestamps: {}
@@ -27,25 +49,31 @@ export function xplane(state = {
             });
             return result;
         }
+        case DATA_VALUE_CHANGED_IN_XPLANE : {
+            let dataIdx = action.dataIdx;
+            let valuesArr = action.valuesArr;
+            let definition = DatarefDefintions[dataIdx];
+            let changed = false;
+            if (definition) {
+                for (let i = 0; i < definition.length; i++) {
+                    let dataref = definition[i];
+                    if (dataref) {
+                        changed = saveValueFromXPlane(result, dataref, valuesArr[i], action.timestamp) || changed;
+                    }
+                }
+            }
+            if (changed) {
+                return result;
+            } else {
+                return state;
+            }
+        }
         case DATAREF_VALUE_CHANGED_IN_XPLANE: {
             let changed = false;
             let internalId = action.internalId;
             let matchingSubscriptions = state.subscriptions.filter(subscription => subscription.internalId === internalId);
             matchingSubscriptions.forEach(subscription => {
-                if (result.values[subscription.dataRef] !== action.newValue) {
-                    result.values[subscription.dataRef] = Object.assign({}, {
-                        value: action.newValue,
-                        timestamp: action.timestamp,
-                        confirmed: true
-                    });
-                    if (result.dirtyValues[subscription.dataRef] && (state.datarefTimestamps[subscription.dataRef] || 0) < action.timestamp) {
-                        let dirtyValues = Object.assign({}, result.dirtyValues);
-                        delete dirtyValues[subscription.dataRef];
-                        result.dirtyValues = dirtyValues;
-                    }
-                }
-                result.datarefTimestamps = Object.assign({}, state.datarefTimestamps, {[subscription.dataRef]: action.timestamp});
-                result.values = Object.assign({}, result.values);
+                saveValueFromXPlane(result, subscription.dataRef, action.newValue, action.timestamp);
                 changed = true;
             });
             if (changed) {

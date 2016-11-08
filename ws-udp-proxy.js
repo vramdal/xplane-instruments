@@ -3,6 +3,7 @@ var http = require('http');
 var dgram = require("dgram");
 const XPLANE_IP = '10.0.1.12';
 const XPLANE_PORT = 49000;
+const LOCAL_UDP_PORT = 49009;
 
 
 var udpClient = dgram.createSocket("udp4");
@@ -17,25 +18,29 @@ var sendUdpMessage = function () {
     var bufferSize = arguments[0];
     var outgoing = new Buffer(new Array(bufferSize));
     var offset = 0;
-    for (var i = 1; i < arguments.length; i++) {
-        var val = arguments[i];
-        if (typeof val === "string") {
-            outgoing.write(val, offset);
-            offset += val.length;
-        } else if (typeof val === "number") {
-            outgoing.writeInt32LE(val, offset);
-            offset += 4
+    try {
+        for (var i = 1; i < arguments.length; i++) {
+            var val = arguments[i];
+            if (typeof val === "string") {
+                outgoing.write(val, offset);
+                offset += val.length;
+            } else if (typeof val === "number") {
+                outgoing.writeFloatLE(val, offset);
+                offset += 4
+            }
         }
+        console.log("UDP Sending " + outgoing.length + " bytes");
+        console.log(outgoing);
+
+
+        udpClient.send(outgoing, 0, outgoing.length, XPLANE_PORT, XPLANE_IP, function (err) {
+            if (err) {
+                console.error("UDP client error sending to " + serverIp, err);
+            }
+        });
+    } catch (e) {
+        console.error("Error building UDP message", e);
     }
-    console.log("UDP Sending " + outgoing.length + " bytes");
-    console.log(outgoing);
-
-
-    udpClient.send(outgoing, 0, outgoing.length, XPLANE_PORT, XPLANE_IP, function(err) {
-        if (err) {
-            console.error("UDP client error sending to " + serverIp, err);
-        }
-    });
 };
 
 
@@ -46,6 +51,7 @@ var server = http.createServer(function(request, response) {
 });
 server.listen(8080, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
+    udpClient.bind(LOCAL_UDP_PORT);
 });
 
 wsServer = new WebSocketServer({
@@ -58,19 +64,57 @@ wsServer = new WebSocketServer({
     autoAcceptConnections: false
 });
 
+function parseDataMsg(buffer, msgOffset) {
+    var ref = buffer.readInt8(msgOffset + 1, true);
+    var floats = {};
+    for (var i = 0; i < 8; i++) {
+        let offset = 5 + i * 4 + msgOffset;
+        floats[i] = buffer.readFloatLE(offset, true);
+    }
+    return {
+        ref: ref,
+        floats: floats
+    };
+}
+
+const MSGTYPES = {
+    DATA: {msgLength: 36},
+    DREF: {msgLength: 16}
+};
+
 udpClient.on("message", function (buffer, rinfo) {
     //console.log("UDP receive");
-    console.log("Receiving UDP", buffer);
-    var msgType = buffer.toString('ascii', 0, 4);
-    var internalRef = buffer.readInt32LE(5);
-    var value = buffer.readInt32LE(9);
-    var payload = [msgType, internalRef, value];
-    var payloadStr = JSON.stringify(payload);
-    //if (payloadStr !== this.lastPayloadStr) {
-        console.log("WS Broadcasting", payload);
-    //}
-    wsServer.broadcastUTF(payloadStr);
-    this.lastPayloadStr = payloadStr;
+    var payload;
+    let processedBytes = 4;
+    do {
+        try {
+            var msgType = buffer.toString('ascii', 0, 4);
+            if (msgType === "DATA") {
+                //console.log(buffer.slice(processedBytes));
+                const parsed = parseDataMsg(buffer, processedBytes);
+                //console.log(parsed);
+                payload = [msgType, parsed.ref, parsed.floats];
+                //console.log("Receiving UDP", /*buffer, rinfo, */msgType, ref, JSON.stringify(floats));
+                processedBytes += MSGTYPES["DATA"].msgLength
+            } else if (msgType === "DREF") {
+                var internalRef = buffer.readInt32LE(4 + processedBytes, true);
+                var value = buffer.readInt32LE(8 + processedBytes, true);
+                if (internalRef > 0) {
+                    payload = [msgType, internalRef, value];
+                } else {
+                    payload = undefined;
+                }
+                processedBytes += MSGTYPES["DREF"].msgLength
+            }
+            if (payload) {
+                var payloadStr = JSON.stringify(payload);
+                wsServer.broadcastUTF(payloadStr);
+                this.lastPayloadStr = payloadStr;
+            }
+        } catch (e) {
+            console.error("Feil ved mottak av UDP-melding", e);
+        }
+    } while (processedBytes < buffer.length - 1)
 });
 
 
@@ -99,7 +143,7 @@ wsServer.on('request', function(request) {
     this.connection = request.accept('xplane', request.origin);
     console.log((new Date()) + ' Connection accepted.');
     // TODO: Send XPlane-connection-data til klienten
-    wsServer.broadcastUTF(JSON.stringify({type: 'PROXY-META', XPLANE_IP, XPLANE_PORT}));
+    wsServer.broadcastUTF(JSON.stringify({type: 'PROXY-META', XPLANE_IP, XPLANE_PORT, LOCAL_UDP_PORT}));
     this.connectionIdx = wsClients.push(this.connection) - 1;
     var _this = this;
     this.connection.on('message', function(message) {
@@ -118,3 +162,7 @@ wsServer.on('request', function(request) {
         wsClients.splice(_this.connectionIdx, 1);
     });
 });
+
+module.exports = {
+    parseDataMsg: parseDataMsg
+};
