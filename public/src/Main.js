@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import DME from './instruments/DME.jsx';
 import Panel from './components/Panel/Panel.jsx';
 import NavRadio from './instruments/NavRadio.jsx';
+import ScrollKnob from './components/ScrollKnob/ScrollKnob.jsx';
 import Transponder from './instruments/Transponder.jsx';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -46,6 +47,9 @@ export default class Main extends React.Component {
                     <div id="Main">
                         <h1>Dashboard</h1>
                         <XPlane/>
+                        <Panel title="Test">
+                            <ScrollKnob/>
+                        </Panel>
                         <Panel title="Transponder">
                            <Transponder dataRef="Sim/cockpit/radios/transponder code"/>
                         </Panel>
@@ -58,8 +62,6 @@ export default class Main extends React.Component {
                         <Panel title="DME">
                             <DME dataRef="sim/cockpit/radios/adf1_dme_dist_m"></DME>
                             <DME dataRef="sim/cockpit/radios/adf2_dme_dist_m"></DME>
-                            {/*<DME dataRef="sim/cockpit/radios/transponder_code"></DME>*/}
-
                         </Panel>
                     </div>
                 </Provider>
