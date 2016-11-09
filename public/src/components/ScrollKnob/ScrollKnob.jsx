@@ -67,7 +67,7 @@ export default class ScrollKnob extends React.Component {
         return (
             <div className="scroll-knob">
                 <div className="label" style={{color: "white"}}>{`${this.state.horizontal} / ${this.state.vertical} - ${this.state.msg}`}</div>
-                <div className="scroll-container" style={{height: '200px', width: '200px', border: '1px solid white', overflow: 'scroll'}} onScroll={this.handleScroll.bind(this)}>
+                <div className="scroll-container" style={{height: '200px', width: '200px', border: '1px solid white', overflow: 'scroll', '-webkit-overflow-scrolling': 'touch'}} onScroll={this.handleScroll.bind(this)}>
                     <div className="moveable" style={{height: `${scrollSize}px`, width: `${scrollSize}px`, backgroundColor: 'yellow'}}></div>
                 </div>
             </div>
