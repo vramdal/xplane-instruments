@@ -70,6 +70,10 @@ export default class Knob extends React.Component {
         this.rotation = 0;
     }
 
+    onScroll(evt) {
+        console.log("evt", evt);
+    }
+
     componentDidUpdate() {
         //this.rotation = this.props.rotation;
     }
@@ -78,7 +82,7 @@ export default class Knob extends React.Component {
         let rotation = this.rotation;
         return (
                 <knob className={this.props.className + ' ' + this.props.axis+'-axis'} ref={ref => this.element = ref}
-                      style={{transform: 'rotate(' + rotation + 'turn)'}}
+                      style={{transform: 'rotate(' + rotation + 'turn)'}} onScroll={this.onScroll.bind(this)}
                 >{this.props.children}
                 </knob>
         );

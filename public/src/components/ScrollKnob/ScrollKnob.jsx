@@ -2,6 +2,9 @@ import * as React from 'react';
 import {store} from 'redux';
 import './ScrollKnob.scss';
 
+const DIRECTION_HORIZONTAL = 0;
+const DIRECTION_VERTICAL = 1;
+
 export default class ScrollKnob extends React.Component {
 
     constructor(props) {
@@ -28,12 +31,6 @@ export default class ScrollKnob extends React.Component {
         this.setState({scrollSize: scrollSize});
     }
 
-    handleWheel(evt) {
-        let deltaX =  evt.deltaX;
-        let deltaY =  evt.deltaY;
-        this.setState({horizontal: this.state.horizontal + deltaX, vertical: this.state.vertical + deltaY});
-    }
-
     static restrain(value, min, max) {
         return Math.max(Math.min(value, max), min);
     }
@@ -44,6 +41,7 @@ export default class ScrollKnob extends React.Component {
     }
 
     handleScroll(evt) {
+        console.trace("ScrollKnob.handleScroll", arguments);
         if (this.dontHandle) {
             return;
         }
@@ -52,9 +50,10 @@ export default class ScrollKnob extends React.Component {
             x: (element.scrollLeft - this.previousScroll.left) * this.props.turnSpeed,
             y: (element.scrollTop - this.previousScroll.top) * this.props.turnSpeed
         };
+        let direction = Math.abs(deltaPx.x) > Math.abs(deltaPx.y) ? DIRECTION_HORIZONTAL : DIRECTION_VERTICAL;
         let deltaValue = {
-            x: deltaPx.x * this.props.precision,
-            y: deltaPx.y * this.props.precision
+            x: direction === DIRECTION_HORIZONTAL ? deltaPx.x * this.props.precision : 0,
+            y: direction === DIRECTION_VERTICAL ? deltaPx.y * this.props.precision : 0
         };
         this.totalScrolled = {
             left: (this.totalScrolled.left + deltaPx.x) % this.state.scrollSize,
@@ -87,7 +86,7 @@ export default class ScrollKnob extends React.Component {
         return (
             <scroll-knob>
                 <div className="label" style={{color: "white"}}>{`${this.state.horizontal} / ${this.state.vertical} - ${this.state.msg}`}</div>
-                <div className="scroll-container" style={{
+                <div className="scroll-container knob" style={{
                     height: '200px',
                     width: '200px',
                     overflow: 'scroll',
