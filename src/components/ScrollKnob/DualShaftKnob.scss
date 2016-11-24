@@ -1,0 +1,11 @@
+dual-shaft-knob {
+  scroll-knob:first-child {
+    //position: absolute;
+  }
+
+  scroll-knob:last-child {
+    position: relative;
+    top: -175px;
+    left: 50px;
+  }
+}

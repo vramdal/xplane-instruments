@@ -9,7 +9,7 @@ scroll-knob {
 
   .scroll-container {
     overflow: scroll;
-    -webkit-overflow-scrolling: auto;
+    //-webkit-overflow-scrolling: auto;
     width: 100%;
     height: 100%;
   }
@@ -25,6 +25,14 @@ scroll-knob {
   ::-webkit-scrollbar {
     display: none;
   }
+
+  /*
+  .moveable {
+    outline: 1px solid yellow;
+    background-color: yellow;
+    opacity: .2;
+  }
+  */
 
 }
 

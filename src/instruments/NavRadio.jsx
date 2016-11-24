@@ -1,41 +1,20 @@
 import React from 'react';
 import './NavRadio.scss';
-import Knob from '../components/Knob/Knob.jsx';
+// import Knob from '../components/Knob/Knob.jsx';
+import DualShaftKnob from '../components/ScrollKnob/DualShaftKnob.jsx';
 import SevenSegmentNumber from '../components/SevenSegment/SevenSegmentNumber.jsx';
 import { connect } from 'react-redux';
 import { subscribeToDataref } from '../components/Lang/DatarefHOC.jsx';
 
 export class NavRadio extends React.Component {
 
-    constructor() {
+    constructor(props) {
         super();
-        this.state = {};
+        this.state = {frequency: props.datarefValue / 100};
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({frequency: nextProps.datarefValue / 100});
-    }
-
-    onMajorKnobChange(changedAmount) {
-        let newValue = this.state.frequency + changedAmount;
-        newValue = Math.min(newValue, this.props.max);
-        newValue = Math.max(newValue, this.props.min);
-        console.log("Major knob change", changedAmount);
-        this.onNewValue(newValue);
-    }
-
-    onMinorKnobChange(changedAmount) {
-        let oldFraction = this.state.frequency - Math.floor(this.state.frequency);
-        let movedFraction = Math.sign(changedAmount) * 5 / 100;
-        let newFraction = oldFraction + movedFraction;
-        if (newFraction > 95) {
-            newFraction = 95;
-        } else if (newFraction < 0) {
-            newFraction = 0;
-        }
-        let newValue = this.state.frequency - (oldFraction + newFraction);
-        console.log("Minor knob change", changedAmount);
-        this.onNewValue(newValue);
     }
 
     getDataRef() {
@@ -50,10 +29,7 @@ export class NavRadio extends React.Component {
         return (
                 <nav-radio>
                     <SevenSegmentNumber max={this.props.max} numDecimals={2} nanText="NaN">{this.state.frequency}</SevenSegmentNumber>
-                    <dual-knob>
-                        <Knob axis="horizontal" className="major" onchange={this.onMajorKnobChange.bind(this)}/>
-                        <Knob axis="vertical" className="minor" onchange={this.onMinorKnobChange.bind(this)}/>
-                    </dual-knob>
+                    <DualShaftKnob max={this.props.max} min={this.props.min} onChange={this.onNewValue.bind(this)} value={this.state.frequency}/>
                 </nav-radio>
         );
     }

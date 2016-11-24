@@ -6,10 +6,11 @@ export default class SevenSegmentNumber extends React.Component {
 
     render() {
 
-        const maxDigits = Math.log(this.props.max) * Math.LOG10E + 1 | 0;
+        let digitsForMaxNumber = Math.log(this.props.max) * Math.LOG10E + 1 | 0;
+        let maxDigits = this.props.digits || digitsForMaxNumber;
         let paddingChar = this.props.zeroPadding ? "0": " ";
         let value = parseFloat(this.props.children);
-        let numModules = maxDigits + 1 + this.props.numDecimals;
+        let numModules = maxDigits + this.props.numDecimals;
         let formatted;
         if (isNaN(value)) {
             formatted = "NaN";
@@ -42,6 +43,7 @@ SevenSegmentNumber.propTypes = {
     max: React.PropTypes.number.isRequired,
     numDecimals: React.PropTypes.number.isRequired,
     zeroPadding: React.PropTypes.bool,
+    digits: React.PropTypes.number,
     nanText: React.PropTypes.string,
     children: function(props, propName, componentName) {
         let val = props[propName];

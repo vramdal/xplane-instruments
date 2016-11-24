@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import DME from './instruments/DME.jsx';
 import Panel from './components/Panel/Panel.jsx';
 import NavRadio from './instruments/NavRadio.jsx';
-import ScrollKnob from './components/ScrollKnob/ScrollKnob.jsx';
+// import ScrollKnob from './components/ScrollKnob/ScrollKnob.jsx';
+import DualShaftKnob from './components/ScrollKnob/DualShaftKnob.jsx';
 import Transponder from './instruments/Transponder.jsx';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -48,7 +49,8 @@ export default class Main extends React.Component {
                         <h1>Dashboard</h1>
                         <XPlane/>
                         <Panel title="Test">
-                            <ScrollKnob/>
+                            <DualShaftKnob onChange={(newValue) => console.log(newValue)}/>
+                            {/*<ScrollKnob/>*/}
                         </Panel>
                         <Panel title="Transponder">
                            <Transponder dataRef="Sim/cockpit/radios/transponder code"/>
