@@ -68,7 +68,13 @@ class XPlane extends React.Component {
                 }
                 let value = nextProps.dirtyValues[dataref].value;
                 // TODO: DREF0+(4byte byte value of 1)+ sim/cockpit/switches/anti_ice_surf_heat_left+0+spaces to complete to 509 bytes
-                this.websocket.send(509, "DREF\0", value, dataref + "\0");
+                if (nextProps.simulate) {
+                    setTimeout(() => {
+                        this.handleWebSocketMessage(JSON.stringify(["DREF", dataref, value]));
+                    }, 500);
+                } else {
+                    this.websocket.send(509, "DREF\0", value, dataref + "\0");
+                }
             }
         }
     }
@@ -161,7 +167,8 @@ function model(state) {
 XPlane.propTypes = {
     subscriptions: React.PropTypes.array,
     dispatch: React.PropTypes.func,
-    dirtyValues: React.PropTypes.object
+    dirtyValues: React.PropTypes.object,
+    simulate: React.PropTypes.bool
 };
 
 export default connect(model, {onWebsocketStatusChange, dataRefValueChangedInXPlane, dataValueChangedInXPlane})(XPlane);

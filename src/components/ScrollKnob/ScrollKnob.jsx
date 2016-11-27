@@ -27,7 +27,8 @@ export default class ScrollKnob extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         let scrollSize = this._scrollSize(nextProps);
-        this.setState({scrollSize: scrollSize});
+        this.setState({scrollSize: scrollSize, value: nextProps.value});
+        this.accurateValue = nextProps.value;
     }
 
     static restrain(value, min, max) {
@@ -82,6 +83,13 @@ export default class ScrollKnob extends React.Component {
             }
         }
         let unrestrainedValue = this.calculateNewValue(this.accurateValue, rotationChangeDeg);
+        if (this.props.circular && unrestrainedValue !== accurateValue) {
+            if (unrestrainedValue < this.props.min) {
+                unrestrainedValue = this.props.max + unrestrainedValue;
+            } else if (unrestrainedValue > this.props.max) {
+                unrestrainedValue = unrestrainedValue - this.props.max
+            }
+        }
         let accurateValue = ScrollKnob.restrain(unrestrainedValue, this.props.min, this.props.max);
         // let outOfBounds = unrestrainedValue != accurateValue; // TODO
         let newValue = ScrollKnob.round(accurateValue, this.props.precision);
@@ -102,15 +110,16 @@ export default class ScrollKnob extends React.Component {
             element.scrollTop = neutral;
             this.dontHandle = false;
             if (wasChanged && this.props.onChange) {
+                console.log("this.state.value", this.state.value);
                 this.props.onChange(this.state.value);
             }
-        }, 20);
+        }, 5);
     }
 
     render() {
         return (
             <scroll-knob>
-                <div className="label" style={{color: "white"}}>{`Verdi: ${this.state.value}`}</div>
+                {/*<div className="label" style={{color: "white"}}>{`Verdi: ${this.state.value}`}</div>*/}
                 {/*<div className="label" style={{color: "white"}}>{`TotalScrolled: ${this.totalScrolled}`}</div>*/}
                 {/*<div className="label" style={{color: "white"}}>{`Rotation: ${Math.round(this.state.rotation, 1)}`}</div>*/}
                 <div className="scroll-container knob" style={{
@@ -139,7 +148,8 @@ ScrollKnob.propTypes = {
     startRotation: React.PropTypes.number.isRequired,
     numberOfTurns: React.PropTypes.number.isRequired,
     reverse: React.PropTypes.bool.isRequired,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    circular: React.PropTypes.bool
 };
 
 ScrollKnob.defaultProps = {
@@ -155,5 +165,6 @@ ScrollKnob.defaultProps = {
     size: 200,
     startRotation: -90,
     numberOfTurns: 1,
-    reverse: false
+    reverse: false,
+    circular: false
 };

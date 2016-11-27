@@ -24,7 +24,7 @@ function saveValueFromXPlane(result, dataRef, newValue, timestamp) {
 export function xplane(state = {
     subscriptions: [] ,
     dataIdxs: {},
-    values: {"sim/cockpit/radios/nav1_freq_hz": {value: 123, confirmed: true}},
+    values: {"sim/cockpit/radios/nav1_freq_hz": {value: 123, confirmed: true}, "sim/cockpit/radios/nav1_stdby_freq_hz": {value: 13595, confirmed: true}},
     dirtyValues: {},
     datarefTimestamps: {}
 }, action) {

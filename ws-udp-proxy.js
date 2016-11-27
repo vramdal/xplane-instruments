@@ -35,7 +35,7 @@ var sendUdpMessage = function () {
 
         udpClient.send(outgoing, 0, outgoing.length, XPLANE_PORT, XPLANE_IP, function (err) {
             if (err) {
-                console.error("UDP client error sending to " + serverIp, err);
+                console.error(`UDP client error sending to ${XPLANE_IP}:${XPLANE_PORT}`, err);
             }
         });
     } catch (e) {

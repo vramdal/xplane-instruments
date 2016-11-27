@@ -4,6 +4,7 @@ import DME from './instruments/DME.jsx';
 import Panel from './components/Panel/Panel.jsx';
 import NavRadio from './instruments/NavRadio.jsx';
 // import ScrollKnob from './components/ScrollKnob/ScrollKnob.jsx';
+import RadioActiveStandby from './instruments/RadioActiveStandby.jsx';
 import DualShaftKnob from './components/ScrollKnob/DualShaftKnob.jsx';
 import Transponder from './instruments/Transponder.jsx';
 import { createStore } from 'redux';
@@ -11,7 +12,7 @@ import { Provider } from 'react-redux';
 import combinedReducer from './reducers';
 import {onWebsocketStatusChange, onWebsocketMessage} from './actions/WebsocketAction';
 import {dataRefValueChangedOnClient, subscribeToDataRef} from './actions/DataRefActions';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import XPlane from './components/XPlane/XPlane.jsx';
 
 import './Main.scss';
@@ -47,7 +48,7 @@ export default class Main extends React.Component {
                 <Provider store={store}>
                     <div id="Main">
                         <h1>Dashboard</h1>
-                        <XPlane/>
+                        <XPlane simulate={true}/>
                         <Panel title="Test">
                             <DualShaftKnob onChange={(newValue) => console.log(newValue)}/>
                             {/*<ScrollKnob/>*/}
@@ -56,6 +57,7 @@ export default class Main extends React.Component {
                            <Transponder dataRef="Sim/cockpit/radios/transponder code"/>
                         </Panel>
                         <Panel title="Nav 1">
+                            <RadioActiveStandby dataRefs={["sim/cockpit/radios/nav1_freq_hz", "sim/cockpit/radios/nav1_stdby_freq_hz"]}/>
                             USE:
                             <NavRadio dataRef="sim/cockpit/radios/nav1_freq_hz"/>
                             STBY:

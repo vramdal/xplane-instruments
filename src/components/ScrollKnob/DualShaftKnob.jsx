@@ -11,9 +11,15 @@ export default class DualShaftKnob extends React.Component {
         this.value = props.value;
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.value = nextProps.value;
+    }
+
     onMinorKnobChange(newValue) {
         this.value = Math.floor(this.value) + newValue;
         if (this.props.onChange) {
+            let changedBy = this.props.value - this.value;
+            console.log("changedBy", changedBy, this.props.value);
             this.props.onChange(this.value);
         }
     }
@@ -21,6 +27,8 @@ export default class DualShaftKnob extends React.Component {
     onMajorKnobChange(newValue) {
         this.value = this.value - Math.floor(this.value) + newValue;
         if (this.props.onChange) {
+            let changedBy = this.props.value - this.value;
+            console.log("changedBy", changedBy, this.props.value);
             this.props.onChange(this.value);
         }
     }
@@ -46,6 +54,7 @@ export default class DualShaftKnob extends React.Component {
                             axis={DIRECTION_VERTICAL}
                             allowScrollPastBoundaries={this.props.allowScrollPastBoundaries}
                             onChange={this.onMinorKnobChange.bind(this)}
+                            circular={true}
                 />
             </dual-shaft-knob>
         );
