@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js",
+    "start": "node run.js",
     "tunnel": "lt --port 3000"
   },
   "dependencies": {

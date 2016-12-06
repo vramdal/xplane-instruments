@@ -37,18 +37,28 @@ export class RadioActiveStandby extends React.Component {
         this.props.onChangedOnClient(this.dataRefActive, this.state.frequencyStandby * 100);
     }
 
-    render() {
+    renderCollapsed() {
+        return (
+            <SevenSegmentNumber max={999.99} numDecimals={2} dataRef={this.dataRefActive}>{this.state.frequencyActive}</SevenSegmentNumber>
+        )
+    }
+
+    renderExpanded() {
         return (
             <radio-active-standby>
                 <SevenSegmentNumber dataRef={this.dataRefActive} max={999.99} numDecimals={2}
                                     nanText="NaN">{this.state.frequencyActive}</SevenSegmentNumber>
-                <button onClick={this.switchFrequencies.bind(this)}>Bytt</button>
+                <button className="switchButton" onClick={this.switchFrequencies.bind(this)}/>
                 <SevenSegmentNumber dataRef={this.dataRefStandby} max={999.99} numDecimals={2}
                                     nanText="NaN">{this.state.frequencyStandby}</SevenSegmentNumber>
                 <DualShaftKnob max={this.props.max} min={this.props.min}
                                onChange={this.onNewKnobValue.bind(this)} value={this.state.frequencyStandby}/>
             </radio-active-standby>
-        );
+        )
+    }
+
+    render() {
+        return this.context.expanded ? this.renderExpanded() : this.renderCollapsed();
     }
 }
 function model(state, ownProps) {
@@ -66,4 +76,8 @@ RadioActiveStandby.defaultProps = {
     dataRefs: ["sim/cockpit/radios/nav1_freq_hz", "sim/cockpit/radios/nav1_stdby_freq_hz"],
     max: 117.95,
     min: 108.00
+};
+
+RadioActiveStandby.contextTypes = {
+    expanded: React.PropTypes.bool
 };

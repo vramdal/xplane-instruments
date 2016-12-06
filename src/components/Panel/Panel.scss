@@ -17,3 +17,22 @@
 
 }
 
+.expanded-panel-dialog {
+  background-color: transparent;
+  border: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  bottom: 10px;
+  right: 10px;
+}
+
+dialog::backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+

@@ -1,4 +1,18 @@
 radio-active-standby {
   display: flex;
   flex-direction: row;
+
+  .switchButton {
+    background-image: url('./DoubleArrow.png');
+    padding: 5px;
+    min-width: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    align-self: flex-start;
+    background-color: black;
+    box-shadow: inset 2px;
+    min-height: 20px;
+  }
 }
