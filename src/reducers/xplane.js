@@ -1,8 +1,12 @@
 import { SUBSCRIBING_TO_DATAREF, DATAREF_VALUE_CHANGED_ON_CLIENT, DATAREF_VALUE_CHANGED_IN_XPLANE, DATA_VALUE_CHANGED_IN_XPLANE } from '../actions/DataRefActions';
-import DatarefDefintions from '../definitions/datarefs';
+import DatarefDefintions, {Conversions} from '../definitions/datarefs';
 
 function saveValueFromXPlane(result, dataRef, newValue, timestamp) {
     let changed = false;
+    if (Conversions[dataRef] && Conversions[dataRef].in) {
+        newValue = Conversions[dataRef].in(newValue);
+    }
+
     if (result.values[dataRef] !== newValue) {
         result.values[dataRef] = Object.assign({}, {
             value: newValue,
@@ -24,7 +28,7 @@ function saveValueFromXPlane(result, dataRef, newValue, timestamp) {
 export function xplane(state = {
     subscriptions: [] ,
     dataIdxs: {},
-    values: {"sim/cockpit/radios/nav1_freq_hz": {value: 123, confirmed: true}, "sim/cockpit/radios/nav1_stdby_freq_hz": {value: 13595, confirmed: true}},
+    values: {"sim/cockpit/radios/nav1_freq_hz": {value: 123, confirmed: true}, "sim/cockpit/radios/nav1_stdby_freq_hz": {value: 135.95, confirmed: true}},
     dirtyValues: {},
     datarefTimestamps: {}
 }, action) {
@@ -83,14 +87,18 @@ export function xplane(state = {
             }
         }
         case DATAREF_VALUE_CHANGED_ON_CLIENT: {
+            let value = action.value;
             result.values[action.dataRef] = Object.assign({}, {
                 value: action.value,
                 timestamp: action.timestamp,
                 confirmed: false
             });
+            if (Conversions[action.dataRef] && Conversions[action.dataRef].out) {
+                value = Conversions[action.dataRef].out(value);
+            }
             result.dirtyValues = Object.assign({}, {
                 [action.dataRef]: {
-                    value: action.value,
+                    value: value,
                     timestamp: action.timestamp
                 }
             });

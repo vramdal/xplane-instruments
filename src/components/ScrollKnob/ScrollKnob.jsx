@@ -149,7 +149,8 @@ ScrollKnob.propTypes = {
     numberOfTurns: React.PropTypes.number.isRequired,
     reverse: React.PropTypes.bool.isRequired,
     onChange: React.PropTypes.func,
-    circular: React.PropTypes.bool
+    circular: React.PropTypes.bool,
+    captureAll: React.PropTypes.bool
 };
 
 ScrollKnob.defaultProps = {
@@ -166,5 +167,6 @@ ScrollKnob.defaultProps = {
     startRotation: -90,
     numberOfTurns: 1,
     reverse: false,
-    circular: false
+    circular: false,
+    captureAll: false
 };

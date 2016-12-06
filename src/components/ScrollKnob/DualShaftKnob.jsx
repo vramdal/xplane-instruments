@@ -43,6 +43,7 @@ export default class DualShaftKnob extends React.Component {
                             value={integer}
                             precision={1}
                             axis={DIRECTION_HORIZONTAL}
+                            captureAll={this.props.captureAll}
                             allowScrollPastBoundaries={this.props.allowScrollPastBoundaries}
                             onChange={this.onMajorKnobChange.bind(this)}
                 />
@@ -52,6 +53,7 @@ export default class DualShaftKnob extends React.Component {
                             value={fraction}
                             precision={this.props.precision}
                             axis={DIRECTION_VERTICAL}
+                            captureAll={this.props.captureAll}
                             allowScrollPastBoundaries={this.props.allowScrollPastBoundaries}
                             onChange={this.onMinorKnobChange.bind(this)}
                             circular={true}
@@ -68,6 +70,7 @@ DualShaftKnob.propTypes = {
     value: React.PropTypes.number.isRequired,
     precision: React.PropTypes.number.isRequired,
     allowScrollPastBoundaries: React.PropTypes.bool.isRequired,
+    captureAll: React.PropTypes.bool.isRequired,
     onChange: React.PropTypes.func
 };
 
@@ -79,5 +82,6 @@ DualShaftKnob.defaultProps = {
     // turnFactor: 1,
     // turnSpeed: 0.25,
     // turnSpeed: 2,
-    allowScrollPastBoundaries: true
+    allowScrollPastBoundaries: true,
+    captureAll: false
 };

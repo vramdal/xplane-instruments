@@ -6,10 +6,6 @@ import { connect } from 'react-redux';
 
 export class Panel extends React.Component {
 
-    getChildContext() {
-        return {expanded: this.props.expanded};
-    }
-
     expand() {
         if (!this.props.expanded) {
             this.props.dispatch(expandPanel(this.props.id));
@@ -79,13 +75,18 @@ export class Panel extends React.Component {
     }
 
     renderCommon() {
+        const childrenWithProps = React.Children.map(this.props.children,
+            (child) => React.cloneElement(child, {
+                expanded: this.props.expanded
+            })
+        );
         let titleEl = this.props.title ?
                 <legend className="panel-title" onClick={this.toggleExpand.bind(this)}>{this.props.title}</legend>
                 : undefined;
         return (
                 <fieldset className={classNames("panel", {expanded: this.props.expanded})} onClick={this.expand.bind(this)}>
                     {titleEl}
-                    {this.props.children}
+                    {childrenWithProps}
                 </fieldset>
         );
     }
@@ -108,8 +109,4 @@ Panel.propTypes = {
 
 Panel.defaultProps = {
     expanded: false
-};
-
-Panel.childContextTypes = {
-    expanded: React.PropTypes.bool
 };

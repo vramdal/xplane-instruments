@@ -49,19 +49,16 @@ export default class Main extends React.Component {
                     <div id="Main">
                         <h1>Dashboard</h1>
                         <XPlane simulate={true}/>
-                        <Panel title="Test" id="test">
-                            <DualShaftKnob onChange={(newValue) => console.log(newValue)}/>
-                            {/*<ScrollKnob/>*/}
-                        </Panel>
                         <Panel title="Transponder" id="transponder">
                            <Transponder dataRef="Sim/cockpit/radios/transponder code"/>
                         </Panel>
-                        <Panel title="Nav 1" id="nav1">
+                        <Panel title="Navigation Radio" id="nav1">
                             <RadioActiveStandby dataRefs={["sim/cockpit/radios/nav1_freq_hz", "sim/cockpit/radios/nav1_stdby_freq_hz"]}/>
+                            <RadioActiveStandby dataRefs={["sim/cockpit/radios/nav2_freq_hz", "sim/cockpit/radios/nav2_stdby_freq_hz"]}/>
                         </Panel>
                         <Panel title="DME" id="dme">
-                            <DME dataRef="sim/cockpit/radios/adf1_dme_dist_m"></DME>
-                            <DME dataRef="sim/cockpit/radios/adf2_dme_dist_m"></DME>
+                            <DME dataRef="sim/cockpit/radios/adf1_dme_dist_m"/>
+                            <DME dataRef="sim/cockpit/radios/adf2_dme_dist_m"/>
                         </Panel>
                     </div>
                 </Provider>
