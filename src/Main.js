@@ -11,7 +11,7 @@ import combinedReducer from './reducers';
 import {onWebsocketStatusChange, onWebsocketMessage} from './actions/WebsocketAction';
 import {dataRefValueChangedOnClient, subscribeToDataRef} from './actions/DataRefActions';
 import XPlane from './components/XPlane/XPlane.jsx';
-import Speech from './components/Speech/Speech.jsx';
+//import Speech from './components/Speech/Speech.jsx';
 
 import './Main.scss';
 
@@ -50,7 +50,7 @@ export default class Main extends React.Component {
                     <div id="Main">
                         <h1>Dashboard</h1>
                         <XPlane simulate={true}/>
-                        <Speech/>
+                        {/*<Speech/>*/}
                         <Panel title="Transponder" id="transponder">
                            <Transponder dataRef="Sim/cockpit/radios/transponder code"/>
                         </Panel>

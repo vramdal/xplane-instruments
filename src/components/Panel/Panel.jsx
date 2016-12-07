@@ -3,6 +3,7 @@ import './Panel.scss';
 import classNames from 'classnames';
 import {expandPanel, collapsePanel} from "../../reducers/layout";
 import { connect } from 'react-redux';
+import SpeechCommandHOC from '../Speech/SpeechCommandHOC.jsx';
 
 export class Panel extends React.Component {
 
@@ -53,6 +54,17 @@ export class Panel extends React.Component {
         }
     }
 
+    getSpeechCommandStr() {
+        return this.props.title;
+    }
+
+    onSpeechCommand(userSaid, commandText, phrases) {
+        if (commandText === this.getSpeechCommandStr()) {
+            this.expand();
+        }
+    }
+
+
     renderDialog() {
         return (
             <dialog className={classNames("expanded-panel-dialog", "expanded")} ref={dialog => this.dialog = dialog}>
@@ -98,7 +110,7 @@ function model(state, ownProps) {
     }
 }
 
-export default connect(model)(Panel);
+export default connect(model)(SpeechCommandHOC(Panel));
 
 Panel.propTypes = {
     children: React.PropTypes.any,
