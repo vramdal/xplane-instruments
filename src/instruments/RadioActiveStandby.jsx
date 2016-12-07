@@ -6,15 +6,14 @@ import { connect } from 'react-redux';
 import DualShaftKnob from '../components/ScrollKnob/DualShaftKnob.jsx';
 import SevenSegmentNumber from '../components/SevenSegment/SevenSegmentNumber.jsx';
 import { subscribeToDatarefs } from '../components/Lang/MultiDatarefHOC.jsx';
-import { Cond, T } from 'react-cond';
 
 export class RadioActiveStandby extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            frequencyActive: props.dataRefValues[0] / 100,
-            frequencyStandby: props.dataRefValues[1] / 100
+            frequencyActive: props.dataRefValues[0],
+            frequencyStandby: props.dataRefValues[1]
         };
         this.dataRefActive = props.dataRefs[0];
         this.dataRefStandby= props.dataRefs[1];
@@ -30,7 +29,7 @@ export class RadioActiveStandby extends React.Component {
 
     onNewKnobValue(newValue) {
         // this.props.onChangedOnClient(this.dataRefStandby, (this.state.frequencyStandby + changedBy) * 100);
-        this.props.onChangedOnClient(this.dataRefStandby, (newValue) * 100);
+        this.props.onChangedOnClient(this.dataRefStandby, (newValue));
     }
 
     switchFrequencies() {
