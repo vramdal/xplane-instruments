@@ -1,0 +1,40 @@
+audio-input-indicator {
+  position: fixed;
+  height: 100px;
+  width: 100px;
+  background-color: wheat;
+  top: 0;
+  right: 0;
+  font-size: 48pt;
+}
+
+audio-input-indicator.started icon {
+  -webkit-animation: pulsate 1s ease-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
+audio-input-indicator.off {
+  opacity: 0.5;
+}
+
+audio-input-indicator.soundStart {
+  background-color: aqua;
+}
+
+audio-input-indicator.processing {
+  outline: 2px solid red;
+}
+
+audio-input-indicator.success {
+  background-color: green;
+}
+
+audio-input-indicator.nomatch {
+  background-color: red;
+}
+
+@-webkit-keyframes pulsate {
+  0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+  50% {opacity: 1.0;}
+  100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+}

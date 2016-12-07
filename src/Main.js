@@ -2,22 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import DME from './instruments/DME.jsx';
 import Panel from './components/Panel/Panel.jsx';
-import NavRadio from './instruments/NavRadio.jsx';
 // import ScrollKnob from './components/ScrollKnob/ScrollKnob.jsx';
 import RadioActiveStandby from './instruments/RadioActiveStandby.jsx';
-import DualShaftKnob from './components/ScrollKnob/DualShaftKnob.jsx';
 import Transponder from './instruments/Transponder.jsx';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import combinedReducer from './reducers';
 import {onWebsocketStatusChange, onWebsocketMessage} from './actions/WebsocketAction';
 import {dataRefValueChangedOnClient, subscribeToDataRef} from './actions/DataRefActions';
-// import { connect } from 'react-redux';
 import XPlane from './components/XPlane/XPlane.jsx';
+import Speech from './components/Speech/Speech.jsx';
 
 import './Main.scss';
 
+
+
 export default class Main extends React.Component {
+
 
     handleWebSocketStatusChange(status) {
         store.dispatch(onWebsocketStatusChange(status));
@@ -49,6 +50,7 @@ export default class Main extends React.Component {
                     <div id="Main">
                         <h1>Dashboard</h1>
                         <XPlane simulate={true}/>
+                        <Speech/>
                         <Panel title="Transponder" id="transponder">
                            <Transponder dataRef="Sim/cockpit/radios/transponder code"/>
                         </Panel>
