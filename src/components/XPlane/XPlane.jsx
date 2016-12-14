@@ -14,6 +14,7 @@ class XPlane extends React.Component {
         let addedSubscriptions = this.findAddedSubscriptions(nextSubscriptions, []);
         console.log("addedSubscriptions on constructor =", addedSubscriptions, nextSubscriptions);
         this.state = {};
+        this.promisedChanges = {};
     }
 
 

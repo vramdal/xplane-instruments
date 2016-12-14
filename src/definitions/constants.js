@@ -1,0 +1,1 @@
+export const ATTR_ON_KEY_RECEIVED = "onKeyReceived";

@@ -4,8 +4,15 @@ import classNames from 'classnames';
 import {expandPanel, collapsePanel} from "../../reducers/layout";
 import { connect } from 'react-redux';
 import SpeechCommandHOC from '../Speech/SpeechCommandHOC.jsx';
+import * as Constants from "../../definitions/constants";
 
 export class Panel extends React.Component {
+
+
+    constructor() {
+        super();
+        this.refsToChildren = [];
+    }
 
     expand() {
         if (!this.props.expanded) {
@@ -17,6 +24,10 @@ export class Panel extends React.Component {
         if (this.props.expanded) {
             this.props.dispatch(collapsePanel(this.props.id));
         }
+    }
+
+    componentWillMount() {
+        this.keyReceptors = [];
     }
 
     componentDidMount() {
@@ -31,11 +42,19 @@ export class Panel extends React.Component {
         this.dialogCloseListener = this.dialog.addEventListener('close', () => {
             this.collapse();
         });
+        this.keypressListener = function(evt) {
+            for (let identificator in this.keyReceptors) {
+                this.keyReceptors[identificator](evt);
+            }
+        }.bind(this);
+        window.addEventListener("keydown", this.keypressListener, false);
     }
 
     componentWillUnmount() {
         this.dialog.removeEventListener('click', this.backdropClickEventListener);
         this.dialog.removeEventListener('close', this.dialogCloseListener);
+        window.removeEventListener("keydown", this.keypressListener);
+        this.keyReceptors = [];
     }
 
     componentDidUpdate() {
@@ -44,6 +63,10 @@ export class Panel extends React.Component {
         } else if (!this.props.expanded && this.dialog.open) {
             this.dialog.close();
         }
+    }
+
+    componentWillUpdate() {
+        this.refsToChildren = [];
     }
 
     toggleExpand() {
@@ -82,14 +105,19 @@ export class Panel extends React.Component {
         )
     }
 
+    registerKeyReceptor(identificator, keyReceptor) {
+        this.keyReceptors[identificator] = keyReceptor;
+    }
+
     renderCollapsed() {
         return this.renderCommon();
     }
 
     renderCommon() {
         const childrenWithProps = React.Children.map(this.props.children,
-            (child) => React.cloneElement(child, {
-                expanded: this.props.expanded
+            (child, i) => React.cloneElement(child, {
+                expanded: this.props.expanded,
+                registerKeyReceptor: this.registerKeyReceptor.bind(this, `child-${i}`)
             })
         );
         let titleEl = this.props.title ?

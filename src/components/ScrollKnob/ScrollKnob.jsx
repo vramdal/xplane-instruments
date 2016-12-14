@@ -44,12 +44,32 @@ export default class ScrollKnob extends React.Component {
         return oldValue + (rotationChangeDeg * (this.props.reverse ? 1 : -1)) / 360 * (this.props.max - this.props.min) / this.props.numberOfTurns
     }
 
+    componentDidMount() {
+        this.props.registerKeyReceptor(this.handleKey.bind(this));
+    }
+
     dir(horizontal, vertical) {
         if (this.props.axis === DIRECTION_HORIZONTAL) {
             return horizontal;
         } else {
             return vertical;
         }
+    }
+
+    handleKey(evt) {
+        let delta = 0;
+        console.trace("ScrollKnob.handleKey", evt.keyCode);
+        if (evt.keyCode === 38) { // Up
+            delta += this.props.turnSpeed * 100;
+        } else if (evt.keyCode === 40) { // Down
+            delta -= this.props.turnSpeed * 100 ;
+        } else {
+            return;
+        }
+        this.container[this.props.axis === DIRECTION_HORIZONTAL ? "scrollLeft" : "scrollTop"] += delta;
+        evt.preventDefault();
+        evt.stopPropagation();
+        //this.container.onScroll();
     }
 
     handleScroll(evt) {
@@ -128,7 +148,9 @@ export default class ScrollKnob extends React.Component {
                     overflow: 'scroll',
                     WebkitOverflowScrolling: 'auto',
                     transform: `rotate(${this.state.rotation}deg)`
-                }} onScroll={this.handleScroll.bind(this)}>
+                }} onScroll={this.handleScroll.bind(this)}
+                     ref={container => this.container = container}
+                >
                     <div className="moveable" style={{height: `${this.state.scrollSize}px`, width: `${this.state.scrollSize}px`}}></div>
                 </div>
             </scroll-knob>
@@ -150,7 +172,8 @@ ScrollKnob.propTypes = {
     reverse: React.PropTypes.bool.isRequired,
     onChange: React.PropTypes.func,
     circular: React.PropTypes.bool,
-    captureAll: React.PropTypes.bool
+    captureAll: React.PropTypes.bool,
+    registerKeyReceptor: React.PropTypes.func
 };
 
 ScrollKnob.defaultProps = {

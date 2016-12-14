@@ -1,6 +1,6 @@
 import * as React from 'react';
 import annyang from 'annyang';
-
+import {SpeechCommands as DatarefSpeechCommands} from '../../definitions/datarefs';
 
 const SpeechCommandRegistry = {
     commands: {},
@@ -27,6 +27,7 @@ const SpeechCommandRegistry = {
 
     didResultMatch: function(userSaid, commandText, phrases) {
         console.trace("SpeechCommandRegistry.didResultMatch", arguments);
+        // TODO: Muffens. Vi kaller jo allerede onSpeechCommand vhja command-objektet
         this.commands[commandText].call(null, userSaid, commandText, phrases);
     },
 
@@ -36,9 +37,12 @@ const SpeechCommandRegistry = {
         // this.setState({listening: false, processing: false, error: false, sucess: false, nomatch: true})
     },
 
-    registerSpeechCommand: function(commandStr, component) {
+    registerSpeechCommand: function(commandStrs, receiverFunc) {
         window.clearTimeout(this.registerDelay);
-        this.commands[commandStr] = component.onSpeechCommand.bind(component);
+        commandStrs = Array.isArray(commandStrs) ? commandStrs : [commandStrs];
+        for (let commandStr of commandStrs) {
+            this.commands[commandStr] = receiverFunc;
+        }
         this.registerDelay = window.setTimeout(() => {
             // Add our commands to annyang
             console.log("Registrerer kommandoer", this.commands);
@@ -92,8 +96,23 @@ export default function SpeechCommandReceiver(ComponentClass, commandStr) {
         }
 
         componentDidMount() {
-            let commandStr = commandStr || this.wrapped.getSpeechCommandStr();
-            SpeechCommandRegistry.registerSpeechCommand(commandStr, this.wrapped);
+            let dataRefs = this.wrapped.getDataRefs && this.wrapped.getDataRefs() || this.wrapped.getDataRef && [this.wrapped.getDataRef()] || [];
+
+            for (let dataRef of dataRefs) {
+                if (DatarefSpeechCommands[dataRef]) {
+                    SpeechCommandRegistry.registerSpeechCommand(
+                        DatarefSpeechCommands[dataRef],
+                        (userSaid, commandText, phrases) => this.wrapped.onSpeechCommand(userSaid, commandText, phrases, dataRef)
+                    );
+                }
+            }
+            let commandStr = commandStr || this.wrapped.getSpeechCommandStr && this.wrapped.getSpeechCommandStr();
+            if (this.wrapped.props.speechPrefix) {
+                commandStr = this.wrapped.props.speechPrefix + " " + commandStr;
+            }
+            if (commandStr) {
+                SpeechCommandRegistry.registerSpeechCommand(commandStr, this.wrapped.onSpeechCommand.bind(this.wrapped));
+            }
         }
 
         componentWillUnmount() {

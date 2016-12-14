@@ -15,6 +15,10 @@ export default class DualShaftKnob extends React.Component {
         this.value = nextProps.value;
     }
 
+    componentDidMount() {
+        this.props.registerKeyReceptor(this.handleKey.bind(this));
+    }
+
     onMinorKnobChange(newValue) {
         this.value = Math.floor(this.value) + newValue;
         if (this.props.onChange) {
@@ -33,6 +37,24 @@ export default class DualShaftKnob extends React.Component {
         }
     }
 
+    handleKey(evt) {
+        if (evt.keyCode === 38 || evt.keyCode === 40) {
+            if (evt.shiftKey) {
+                this.minorKnob.handleKey(evt);
+            } else {
+                this.majorKnob.handleKey(evt);
+            }
+        }
+    }
+
+    registerKeyReceptor(whichKnob, keyReceptor) {
+        if (whichKnob === "major") {
+            this.majorKnob = keyReceptor;
+        } else {
+            this.minorKnob = keyReceptor;
+        }
+    }
+
     render() {
         let fraction = this.props.value - Math.floor(this.props.value);
         let integer = Math.floor(this.props.value);
@@ -46,6 +68,8 @@ export default class DualShaftKnob extends React.Component {
                             captureAll={this.props.captureAll}
                             allowScrollPastBoundaries={this.props.allowScrollPastBoundaries}
                             onChange={this.onMajorKnobChange.bind(this)}
+                            ref={majorKnob => this.majorKnob = majorKnob}
+                            registerKeyReceptor={this.registerKeyReceptor.bind(this, "major")}
                 />
                 <ScrollKnob max={0.95}
                             min={0}
@@ -57,6 +81,8 @@ export default class DualShaftKnob extends React.Component {
                             allowScrollPastBoundaries={this.props.allowScrollPastBoundaries}
                             onChange={this.onMinorKnobChange.bind(this)}
                             circular={true}
+                            ref={minorKnob => this.minorKnob = minorKnob}
+                            registerKeyReceptor={this.props.registerKeyReceptor.bind(this, "minor")}
                 />
             </dual-shaft-knob>
         );
@@ -71,7 +97,8 @@ DualShaftKnob.propTypes = {
     precision: React.PropTypes.number.isRequired,
     allowScrollPastBoundaries: React.PropTypes.bool.isRequired,
     captureAll: React.PropTypes.bool.isRequired,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    registerKeyReceptor: React.PropTypes.func
 };
 
 DualShaftKnob.defaultProps = {
