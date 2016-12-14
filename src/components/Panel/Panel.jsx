@@ -43,8 +43,10 @@ export class Panel extends React.Component {
             this.collapse();
         });
         this.keypressListener = function(evt) {
-            for (let identificator in this.keyReceptors) {
-                this.keyReceptors[identificator](evt);
+            if (this.props.expanded) {
+                for (let identificator in this.keyReceptors) {
+                    this.keyReceptors[identificator](evt);
+                }
             }
         }.bind(this);
         window.addEventListener("keydown", this.keypressListener, false);

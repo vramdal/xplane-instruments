@@ -8,6 +8,10 @@ seven-segment {
   display: inline-block;
 }
 
+input {
+  font-family: "7segment", sans-serif;
+}
+
 seven-segment:not(.dot) {
   min-width: 1em;
 }

@@ -7,6 +7,9 @@ export default class PulsingOrb extends React.Component {
     pulse() {
         if (!this.isPulsing) {
             this.isPulsing = window.setTimeout(() => {
+                if (!this.orb) {
+                    return;
+                }
                 this.orb.classList.remove("single-pulse");
                 window.clearTimeout(this.isPulsing);
                 this.isPulsing = false;

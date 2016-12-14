@@ -116,8 +116,10 @@ export default function SpeechCommandReceiver(ComponentClass, commandStr) {
         }
 
         componentWillUnmount() {
-            let commandStr = commandStr || this.wrapped.getSpeechCommandStr();
-            SpeechCommandRegistry.unregisterSpeechCommand(commandStr, this.wrapped);
+            let commandStr = commandStr || this.wrapped.getSpeechCommandStr && this.wrapped.getSpeechCommandStr();
+            if (commandStr) {
+                SpeechCommandRegistry.unregisterSpeechCommand(commandStr, this.wrapped);
+            }
         }
 
         /* Updating */
