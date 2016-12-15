@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import DME from './instruments/DME.jsx';
 import Panel from './components/Panel/Panel.jsx';
+import Knob from './components/Knob/Knob.jsx';
 // import ScrollKnob from './components/ScrollKnob/ScrollKnob.jsx';
 import RadioActiveStandby from './instruments/RadioActiveStandby.jsx';
 import Transponder from './instruments/Transponder.jsx';
@@ -52,6 +53,7 @@ export default class Main extends React.Component {
                     <div id="Main">
                         <h1>Dashboard</h1>
                         <XPlane simulate={false}/>
+                        <Knob/>
                         {/*<Speech/>*/}
                         <Panel title="Transponder" id="transponder">
                            <Transponder dataRef="Sim/cockpit/radios/transponder code"/>

@@ -1,0 +1,3 @@
+https://github.com/JedWatson/react-tappable
+https://github.com/andrepolischuk/react-rotation
+
