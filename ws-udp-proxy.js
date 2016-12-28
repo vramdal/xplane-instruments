@@ -1,7 +1,7 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var dgram = require("dgram");
-const XPLANE_IP = '10.0.1.12';
+const XPLANE_IP = '10.0.1.8';
 const XPLANE_PORT = 49000;
 const LOCAL_UDP_PORT = 49009;
 

@@ -8,6 +8,7 @@ class DME extends React.Component {
     render() {
         return (
                 <instrument className="DME">
+                    {this.props.title}:
                     <SevenSegmentNumber className="DME" max={999} numDecimals={2} nanText="NaN" zeroPadding={false}>{this.props.datarefValue}</SevenSegmentNumber>
                 </instrument>
         );
@@ -23,6 +24,7 @@ function model(state, ownProps) {
 }
 
 DME.propTypes = {
+    title: React.PropTypes.string
 };
 
 export default connect(model)(subscribeToDataref(DME));

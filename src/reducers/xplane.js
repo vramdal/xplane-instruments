@@ -55,6 +55,9 @@ export function xplane(state = {
         }
         case DATA_VALUE_CHANGED_IN_XPLANE : {
             let dataIdx = action.dataIdx;
+            if (dataIdx === 116) {
+                console.trace(116, JSON.stringify(action.valuesArr));
+            }
             let valuesArr = action.valuesArr;
             let definition = DatarefDefintions[dataIdx];
             let changed = false;

@@ -6,33 +6,33 @@ const SpeechCommandRegistry = {
     commands: {},
 
     didStart: function() {
-        console.trace("SpeechCommandRegistry.didStart", arguments);
+        //console.trace("SpeechCommandRegistry.didStart", arguments);
         // this.setState({off: false, started: true, listening: false, processing: false, error: false, success: false, nomatch: false})
     },
 
     didSoundStart: function() {
-        console.trace("SpeechCommandRegistry.didSoundStart", arguments);
+        //console.trace("SpeechCommandRegistry.didSoundStart", arguments);
         // this.setState({started: true, listening: true, processing: true, error: false, success: false, nomatch: false});
     },
 
     didResult: function() {
-        console.trace("SpeechCommandRegistry.didResult", arguments);
+        //console.trace("SpeechCommandRegistry.didResult", arguments);
         // this.setState({listening: false, processing: true, error: false, success: false, nomatch: false});
     },
 
     didError: function() {
-        console.trace("SpeechCommandRegistry.didError", arguments);
+        //console.trace("SpeechCommandRegistry.didError", arguments);
         // this.setState({listening: false, processing: false, error: true, success: false, nomatch: false})
     },
 
     didResultMatch: function(userSaid, commandText, phrases) {
-        console.trace("SpeechCommandRegistry.didResultMatch", arguments);
+        //console.trace("SpeechCommandRegistry.didResultMatch", arguments);
         // TODO: Muffens. Vi kaller jo allerede onSpeechCommand vhja command-objektet
         this.commands[commandText].call(null, userSaid, commandText, phrases);
     },
 
     didResultNoMatch: function() {
-        console.trace("SpeechCommandRegistry.didResultNoMatch", arguments);
+        //console.trace("SpeechCommandRegistry.didResultNoMatch", arguments);
         // console.log("No match");
         // this.setState({listening: false, processing: false, error: false, sucess: false, nomatch: true})
     },

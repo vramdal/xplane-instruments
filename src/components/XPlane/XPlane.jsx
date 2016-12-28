@@ -31,7 +31,14 @@ class XPlane extends React.Component {
 */
     }
 
+    componentDidMount() {
+        this.mounted = true;
+    }
+
+
+
     componentWillUnmount() {
+        this.mounted = false;
         window.clearInterval(this.dummyInterval);
     }
 
@@ -104,6 +111,9 @@ class XPlane extends React.Component {
 
 
     handleWebSocketMessage(data) {
+        if (!this.mounted) {
+            return;
+        }
         data = JSON.parse(data);
         if (data.type === "PROXY-META") {
             this.setState({"websocketText": "Assuming X-Plane at " + data.XPLANE_IP + ":" + data.XPLANE_PORT + ", listening to " + data.LOCAL_UDP_PORT })

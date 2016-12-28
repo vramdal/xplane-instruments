@@ -1,0 +1,19 @@
+.status-light {
+  height: 100px;
+  width: 100px;
+  border-radius: 5px;
+
+  &.on {
+    background-color: green;
+  }
+
+  &.off {
+    background-color: red;
+  }
+
+  &.no {
+    background-color: black;
+  }
+}
+
+

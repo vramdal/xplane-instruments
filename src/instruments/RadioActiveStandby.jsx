@@ -67,11 +67,13 @@ export class RadioActiveStandby extends React.Component {
     render() {
         return (
             <div className="radio-active-standby" ref={root => this.root = root}>
+                {this.props.title}:
                 <SevenSegmentNumber dataRef={this.dataRefActive} max={999.99} numDecimals={2}
                                     nanText="NaN">{this.state.frequencyActive}</SevenSegmentNumber>
 
                 {this.props.expanded &&    <button className="switchButton" onClick={this.switchFrequencies.bind(this)}/>}
-                {this.props.expanded &&    <SevenSegmentNumber dataRef={this.dataRefStandby} max={999.99} numDecimals={2}
+                {this.props.expanded &&    <SevenSegmentNumber dataRef={this.dataRefStandby} max={999.99} numDecimals={this.props.decimals} readOnly={false}
+                                                               onChange={this.onNewKnobValue.bind(this)}
                                                                nanText="NaN">{this.state.frequencyStandby}</SevenSegmentNumber>}
                 {this.props.expanded &&    <DualShaftKnob max={this.props.max} min={this.props.min} captureAll={this.props.expanded}
                                                           onChange={this.onNewKnobValue.bind(this)} value={this.state.frequencyStandby}
@@ -93,12 +95,15 @@ RadioActiveStandby.propTypes = {
     max: React.PropTypes.number,
     min: React.PropTypes.number,
     expanded: React.PropTypes.bool,
-    registerKeyReceptor: React.PropTypes.func
+    registerKeyReceptor: React.PropTypes.func,
+    title: React.PropTypes.string,
+    decimals: React.PropTypes.number
 };
 
 RadioActiveStandby.defaultProps = {
     dataRefs: ["sim/cockpit/radios/nav1_freq_hz", "sim/cockpit/radios/nav1_stdby_freq_hz"],
     max: 117.95,
     min: 108.00,
-    expanded: true
+    expanded: true,
+    decimals: 2
 };
